@@ -1,17 +1,37 @@
 const game = new Game();
 
+game.setLevelBoundaries(3000, 600);
+
 const player = new Player(100, 300);
 game.addSprite(player);
 
-// Calculate ground position
+// Create ground segments with gaps
+const groundSegments = [
+    // First section
+    { x: 0, width: 400 },
+    // Gap of 100 pixels
+    { x: 500, width: 300 },
+    // Gap of 150 pixels
+    { x: 800, width: 400 },
+    // Small platform
+    { x: 1300, width: 100 },
+    // Large gap
+    { x: 1500, width: 500 },
+    // Final stretch
+    { x: 2100, width: 900 }
+];
+
+// Add ground platforms
 const groundHeight = 100;
-const ground = new Platform(
-  0,
-  game.canvas.height - groundHeight,
-  game.canvas.width,
-  groundHeight
-);
-game.addSprite(ground);
+groundSegments.forEach(segment => {
+    const ground = new Platform(
+        segment.x,
+        game.canvas.height - groundHeight,
+        segment.width,
+        groundHeight
+    );
+    game.addSprite(ground);
+});
 
 const block1 = new Block(
   game.canvas.width / 2 - 100,

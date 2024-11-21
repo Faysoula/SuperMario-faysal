@@ -12,7 +12,12 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
     this.sprites = [];
     this.keys = {}; // Store active keys
+    this.camera = new Camera(this.canvas);
     this.bindKeyboardEvents();
+  }
+
+  setLevelBoundaries(width, height) {
+    this.camera.setLevelBoundaries(width, height);
   }
 
   addSprite(sprite) {
@@ -20,19 +25,38 @@ class Game {
   }
   update() {
     let updatedSprites = [];
+    let player = null; // Declare player variable first
+
     for (let i = 0; i < this.sprites.length; i++) {
       let sprite = this.sprites[i];
+
+      if (sprite instanceof Player) {
+        player = sprite; // Now this assignment will work
+      }
 
       if (!sprite.update(this.sprites, this.keys)) {
         updatedSprites.push(sprite);
       }
     }
+
+    // Update camera position based on player
+    this.camera.update(player);
+
     this.sprites = updatedSprites;
   }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.sprites.forEach((sprite) => sprite.draw(this.ctx));
+
+    this.camera.begin(this.ctx);
+
+    this.sprites.forEach((sprite) => {
+      if (this.camera.isVisible(sprite)) {
+        sprite.draw(this.ctx);
+      }
+    });
+
+    this.camera.end(this.ctx);
   }
 
   animate() {
