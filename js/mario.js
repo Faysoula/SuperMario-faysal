@@ -11,6 +11,8 @@ class Player extends Sprite {
     this.jumpForce = -12;
     this.gravity = 0.5;
     this.isGrounded = false;
+    this.spawnX = x; // Save spawn position
+    this.spawnY = y;
   }
 
   update(sprites, keys) {
@@ -36,6 +38,11 @@ class Player extends Sprite {
     this.x += this.velocityX;
     this.y += this.velocityY;
 
+    if (this.y > 600) {
+      // Adjust this value based on your level
+      this.respawn();
+    }
+
     // Reset grounded state
     this.isGrounded = false;
 
@@ -48,7 +55,13 @@ class Player extends Sprite {
       }
     });
 
-    return false; 
+    return false;
+  }
+  respawn() {
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    this.velocityX = 0;
+    this.velocityY = 0;
   }
 
   checkCollision(platform) {
