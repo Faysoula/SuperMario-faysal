@@ -36,6 +36,12 @@ class Player extends Sprite {
 
     // Update position
     this.x += this.velocityX;
+
+    // Prevent moving past the left boundary
+    if (this.x < 0) {
+      this.x = 0;
+    }
+
     this.y += this.velocityY;
 
     if (this.y > 600) {
@@ -57,6 +63,7 @@ class Player extends Sprite {
 
     return false;
   }
+
   respawn() {
     this.x = this.spawnX;
     this.y = this.spawnY;
