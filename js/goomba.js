@@ -53,15 +53,17 @@ class Goomba extends Sprite {
         }
       } else if (sprite instanceof Player && !this.isDead) {
         if (this.checkCollision(sprite)) {
-          const hitFromAbove =
-            sprite.y + sprite.height < this.y + this.height / 2 &&
-            sprite.velocityY > 0;
+          if (!sprite.isDying) {
+            const hitFromAbove =
+              sprite.y + sprite.height < this.y + this.height / 2 &&
+              sprite.velocityY > 0;
 
-          if (hitFromAbove) {
-            this.die();
-            sprite.velocityY = -8;
-          } else {
-            sprite.respawn();
+            if (hitFromAbove) {
+              this.die();
+              sprite.velocityY = -8;
+            } else {
+              sprite.die();
+            }
           }
         }
       }
@@ -80,7 +82,7 @@ class Goomba extends Sprite {
     this.isDead = true;
     this.frameIndex = 2;
     this.height = this.squishHeight;
-    this.y = this.y + (this.originalHeight + this.squishHeight-25);
+    this.y = this.y + (this.originalHeight + this.squishHeight - 25);
     this.velocityX = 0;
     this.velocityY = 0;
   }

@@ -50,6 +50,10 @@ class SpriteAnimation {
         frames: [{ x: 60, y: 0 }],
         loop: false,
       },
+      death: {
+        frames: [{ x: 0, y: 16 }],
+        loop: false,
+      },
     };
 
     this.currentState = "idleRight";

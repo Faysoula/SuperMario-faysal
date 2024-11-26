@@ -3,12 +3,12 @@ class Player extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 32;
-    this.height = 32;
+    this.width = 30;
+    this.height = 30;
     this.velocityX = 0;
     this.velocityY = 0;
     this.speed = 3;
-    this.airControl = 2; // Amount of air movement control
+    this.airControl = 2;
     this.jumpForce = -15;
     this.gravity = 0.8;
     this.isGrounded = false;
@@ -19,15 +19,36 @@ class Player extends Sprite {
     this.maxTurnTime = 5;
     this.wasGrounded = true;
     this.jumpDirection = 1;
-    this.groundSpeed = 0; // Track ground speed before jumping
+    this.groundSpeed = 0;
+    this.isDying = false;
+    this.deathJumpVelocity = -12;
+    this.deathGravity = 0.5;
 
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
-
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
   }
 
+  die() {
+    if (!this.isDying) {
+      this.isDying = true;
+      this.velocityY = this.deathJumpVelocity;
+      this.velocityX = 0;
+      this.animation.setState("death");
+    }
+  }
+
   update(sprites, keys) {
+    if (this.isDying) {
+      this.velocityY += this.deathGravity;
+      this.y += this.velocityY;
+
+      if (this.y > 800) {
+        this.respawn();
+      }
+      return false;
+    }
+
     if (this.turnTimer > 0) {
       this.turnTimer--;
       if (this.turnTimer === 0) {
@@ -38,12 +59,10 @@ class Player extends Sprite {
       return false;
     }
 
-    // Store ground speed before jumping
     if (this.isGrounded) {
       this.groundSpeed = this.velocityX;
     }
 
-    // Jump handling
     if ((keys["ArrowUp"] || keys["W"] || keys[" "]) && this.isGrounded) {
       this.velocityY = this.jumpForce;
       this.isGrounded = false;
@@ -52,7 +71,6 @@ class Player extends Sprite {
     }
 
     if (this.isGrounded) {
-      // Ground movement
       if (keys["ArrowLeft"] || keys["A"]) {
         if (this.direction === 1) {
           this.animation.setState("turnLeft");
@@ -78,12 +96,10 @@ class Player extends Sprite {
         );
       }
     } else {
-      // Air movement - maintain jump animation but allow adjustment to velocity
       this.animation.setState(
         this.jumpDirection === 1 ? "jumpRight" : "jumpLeft"
       );
 
-      // Keep momentum but allow slight adjustments
       if (keys["ArrowLeft"] || keys["A"]) {
         this.velocityX = Math.max(
           this.groundSpeed - this.airControl,
@@ -95,27 +111,27 @@ class Player extends Sprite {
           this.speed
         );
       } else {
-        // Maintain momentum when no keys pressed
         this.velocityX = this.groundSpeed;
       }
     }
 
-    // Physics updates
     this.velocityY += this.gravity;
     this.x += this.velocityX;
     this.y += this.velocityY;
 
     if (this.x < 0) this.x = 0;
-    if (this.y > 600) this.respawn();
+    if (this.y > 600 && !this.isDying) this.respawn();
 
-    // Reset grounded state and check collisions
     this.wasGrounded = this.isGrounded;
     this.isGrounded = false;
-    sprites.forEach((sprite) => {
-      if (sprite instanceof Platform && this.checkCollision(sprite)) {
-        this.resolveCollision(sprite);
-      }
-    });
+
+    if (!this.isDying) {
+      sprites.forEach((sprite) => {
+        if (sprite instanceof Platform && this.checkCollision(sprite)) {
+          this.resolveCollision(sprite);
+        }
+      });
+    }
 
     this.animation.update();
     return false;
@@ -126,6 +142,8 @@ class Player extends Sprite {
     this.y = this.spawnY;
     this.velocityX = 0;
     this.velocityY = 0;
+    this.isDying = false;
+    this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
   }
 
   checkCollision(platform) {
@@ -148,7 +166,6 @@ class Player extends Sprite {
         ? this.y + this.height - platform.y
         : platform.y + platform.height - this.y;
 
-    // Resolve collision on smallest overlap axis
     if (overlapX < overlapY) {
       if (this.x + this.width / 2 < platform.x + platform.width / 2) {
         this.x = platform.x - this.width;
