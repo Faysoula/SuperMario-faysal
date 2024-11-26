@@ -7,7 +7,7 @@ class Player extends Sprite {
     this.height = 32;
     this.velocityX = 0;
     this.velocityY = 0;
-    this.speed = 5;
+    this.speed = 3;
     this.airControl = 2; // Amount of air movement control
     this.jumpForce = -15;
     this.gravity = 0.8;

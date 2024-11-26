@@ -59,6 +59,14 @@ class LevelManager {
           this.game.addSprite(newCoin);
         });
       }
+      if (levelData.enemies) {
+        levelData.enemies.forEach((enemy) => {
+          if (enemy.type === "goomba") {
+            const goomba = new Goomba(enemy.x, enemy.y);
+            this.game.addSprite(goomba);
+          }
+        });
+      }
     }
   }
 
@@ -103,29 +111,10 @@ class LevelManager {
         { x: 2032, y: 350, type: "brick" }, // Changed from 2034
         { x: 2064, y: 350, type: "question" }, // Changed from 2068
       ],
-      coins: [
-        // Line of coins on first ground segment
-        { x: 100, y: 500 },
-        { x: 150, y: 500 },
-        { x: 200, y: 500 },
-        { x: 250, y: 500 },
-
-        // Coins in a vertical line
-        { x: 300, y: 450 },
-        { x: 300, y: 400 },
-        { x: 300, y: 350 },
-
-        // Coins in an arc
-        { x: 350, y: 480 },
-        { x: 400, y: 460 },
-        { x: 450, y: 450 },
-        { x: 500, y: 460 },
-        { x: 550, y: 480 },
-
-        // Coins near blocks
-        { x: 400, y: 320 },
-        { x: 432, y: 320 },
-        { x: 464, y: 320 },
+      enemies: [
+        { type: "goomba", x: 500, y: 300 },
+        { type: "goomba", x: 800, y: 300 },
+        { type: "goomba", x: 1200, y: 300 },
       ],
     });
 

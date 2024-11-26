@@ -9,33 +9,33 @@ class SpriteAnimation {
 
     this.states = {
       idleRight: {
-        frames: [{ x: 209, y: 0 }],
+        frames: [{ x: 211, y: 0 }],
         loop: false,
       },
       idleLeft: {
-        frames: [{ x: 179, y: 0 }],
+        frames: [{ x: 181, y: 0 }],
         loop: false,
       },
       walkRight: {
         frames: [
-          { x: 299, y: 0 },
-          { x: 269, y: 0 },
-          { x: 239, y: 0 },
+          { x: 300, y: 0 },
+          { x: 272, y: 0 },
+          { x: 241, y: 0 },
         ],
         loop: true,
         frameDelay: 8,
       },
       walkLeft: {
         frames: [
-          { x: 88, y: 0 },
-          { x: 119, y: 0 },
-          { x: 149, y: 0 },
+          { x: 89, y: 0 },
+          { x: 121, y: 0 },
+          { x: 150, y: 0 },
         ],
         loop: true,
         frameDelay: 8,
       },
       jumpRight: {
-        frames: [{ x: 358, y: 0 }],
+        frames: [{ x: 359, y: 0 }],
         loop: false,
       },
       jumpLeft: {
@@ -43,7 +43,7 @@ class SpriteAnimation {
         loop: false,
       },
       turnRight: {
-        frames: [{ x: 329, y: 0 }],
+        frames: [{ x: 331, y: 0 }],
         loop: false,
       },
       turnLeft: {
