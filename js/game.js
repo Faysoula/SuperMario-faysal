@@ -31,7 +31,7 @@ class Game {
       let sprite = this.sprites[i];
 
       if (sprite instanceof Player) {
-        player = sprite; // Now this assignment will work
+        player = sprite; 
       }
 
       if (!sprite.update(this.sprites, this.keys)) {

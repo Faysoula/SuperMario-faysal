@@ -62,7 +62,6 @@ class LevelManager {
     }
   }
 
-  // Define level data
   defineLevels() {
     // Level 1-1
     this.levels.push({

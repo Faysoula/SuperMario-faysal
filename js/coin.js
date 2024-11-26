@@ -69,6 +69,7 @@ class Coin extends Sprite {
   draw(ctx) {
     ctx.save();
 
+    //will remove these when i add sprites for now this is the coin
     // Apply fade out effect
     ctx.globalAlpha = this.fadeOut;
 
