@@ -3,37 +3,30 @@ class Block extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 32;
-    this.height = 32;
+    this.width = 30;
+    this.height = 30;
     this.type = type;
     this.hit = false;
     this.hitAnimation = 0;
     this.originalY = y;
     this.hitCooldown = 0;
 
-    // Question block animation
-    this.questionAnimationFrame = 0;
-    this.questionAnimationTimer = 0;
-    this.questionFrames = ["?", "?", "?", " "];
-  }
+    // Sprite sheet setup
+    this.spriteSheet = new Image();
+    this.spriteSheet.src = "../images/blocks.png";
 
-  isHittingFromBelow(player) {
-    // Check if player's head is near the bottom of the block
-    const playerHeadY = player.y;
-    const blockBottomY = this.y + this.height;
-
-    // Vertical alignment check - player's head near block bottom
-    const verticalOverlap = Math.abs(playerHeadY - blockBottomY) < 10;
-
-    // Horizontal alignment check - player is somewhat aligned with block horizontally
-    const horizontalOverlap =
-      player.x + player.width > this.x + 5 &&
-      player.x < this.x + this.width - 5;
-
-    // Must be moving upward
-    const movingUp = player.velocityY < 0;
-
-    return verticalOverlap && horizontalOverlap && movingUp;
+    // Question block animation properties
+    this.frameIndex = 0;
+    this.frameTimer = 0;
+    this.frameDelay = 15; // Controls animation speed
+    this.questionBlockFrames = [
+      { x: 80, y: 112 },
+      { x: 96, y: 112 },
+      { x: 112, y: 112 },
+      { x: 96, y: 112 },
+    ];
+    this.hitFrame = { x: 128, y: 112 };
+    this.brickFrame = { x: 272, y: 112 };
   }
 
   update(sprites, keys) {
@@ -70,13 +63,13 @@ class Block extends Sprite {
       }
     }
 
-    // Handle question block animation
+    // Update question block animation
     if (this.type === "question" && !this.hit) {
-      this.questionAnimationTimer += 0.05;
-      if (this.questionAnimationTimer >= 1) {
-        this.questionAnimationTimer = 0;
-        this.questionAnimationFrame =
-          (this.questionAnimationFrame + 1) % this.questionFrames.length;
+      this.frameTimer++;
+      if (this.frameTimer >= this.frameDelay) {
+        this.frameTimer = 0;
+        this.frameIndex =
+          (this.frameIndex + 1) % this.questionBlockFrames.length;
       }
     }
 
@@ -142,45 +135,50 @@ class Block extends Sprite {
   }
 
   draw(ctx) {
+    if (!this.spriteSheet.complete) return;
+
+    let sourceX, sourceY;
+
     if (this.type === "brick") {
-      this.drawBrickBlock(ctx);
+      // Use brick sprite
+      sourceX = this.brickFrame.x;
+      sourceY = this.brickFrame.y;
     } else if (this.type === "question") {
-      this.drawQuestionBlock(ctx);
+      if (this.hit) {
+        // Use hit frame for question block
+        sourceX = this.hitFrame.x;
+        sourceY = this.hitFrame.y;
+      } else {
+        // Use current animation frame for question block
+        const currentFrame = this.questionBlockFrames[this.frameIndex];
+        sourceX = currentFrame.x;
+        sourceY = currentFrame.y;
+      }
     }
+
+    // Draw the block sprite
+    ctx.drawImage(
+      this.spriteSheet,
+      sourceX,
+      sourceY,
+      16, // Source width (sprite size)
+      16, // Source height (sprite size)
+      this.x,
+      this.y,
+      this.width, // Destination width (scaled up)
+      this.height // Destination height (scaled up)
+    );
   }
 
-  drawBrickBlock(ctx) {
-    ctx.fillStyle = this.hit ? "#784421" : "#B87333";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+  isHittingFromBelow(player) {
+    const playerHeadY = player.y;
+    const blockBottomY = this.y + this.height;
+    const verticalOverlap = Math.abs(playerHeadY - blockBottomY) < 10;
+    const horizontalOverlap =
+      player.x + player.width > this.x + 5 &&
+      player.x < this.x + this.width - 5;
+    const movingUp = player.velocityY < 0;
 
-    ctx.strokeStyle = this.hit ? "#5C341A" : "#8B4513";
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y + this.height / 2);
-    ctx.lineTo(this.x + this.width, this.y + this.height / 2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(this.x + this.width / 2, this.y);
-    ctx.lineTo(this.x + this.width / 2, this.y + this.height);
-    ctx.stroke();
-  }
-
-  drawQuestionBlock(ctx) {
-    ctx.fillStyle = this.hit ? "#784421" : "#FFD700";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-
-    if (!this.hit) {
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "20px Arial";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(
-        this.questionFrames[this.questionAnimationFrame],
-        this.x + this.width / 2,
-        this.y + this.height / 2
-      );
-    }
+    return verticalOverlap && horizontalOverlap && movingUp;
   }
 }

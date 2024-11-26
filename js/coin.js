@@ -3,19 +3,19 @@ class Coin extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 20;
-    this.height = 20;
+    this.width = 32;
+    this.height = 32;
     this.collected = false;
-    this.startY = y; // Remember starting position
+    this.startY = y;
 
     // Physics properties
-    this.velocityY = -15; // Stronger initial upward velocity
-    this.gravity = 0.8; // Increased gravity for snappier movement
-
-    // Animation properties
-    this.rotation = 0;
-    this.rotationSpeed = 0.2;
+    this.velocityY = -15;
+    this.gravity = 0.8;
     this.fadeOut = 1.0;
+
+    // Load the animated GIF directly
+    this.sprite = new Image();
+    this.sprite.src = "../images/Coin.gif"; // Make sure the coin.gif is in your images folder
 
     // Track animation state
     this.state = "rising"; // states: rising, falling, removing
@@ -29,32 +29,38 @@ class Coin extends Sprite {
     // State machine for coin animation
     switch (this.state) {
       case "rising":
-        // If velocity becomes positive (starts falling), transition to falling state
         if (this.velocityY > 0) {
           this.state = "falling";
         }
         break;
 
       case "falling":
-        // When coin falls back to original position (or below), start removal
         if (this.y >= this.startY) {
           this.state = "removing";
         }
         break;
 
       case "removing":
-        // Fade out and remove
-        this.fadeOut -= 0.2; // Faster fade out
+        this.fadeOut -= 0.2;
         if (this.fadeOut <= 0) {
           return true; // Remove the coin
         }
         break;
     }
 
-    // Rotate the coin
-    this.rotation += this.rotationSpeed;
-
     return false;
+  }
+
+  draw(ctx) {
+    if (!this.sprite.complete) return;
+
+    ctx.save();
+    ctx.globalAlpha = this.fadeOut;
+
+    // Draw the animated GIF
+    ctx.drawImage(this.sprite, this.x, this.y, this.width, this.height);
+
+    ctx.restore();
   }
 
   checkCollision(player) {
@@ -64,32 +70,5 @@ class Coin extends Sprite {
       this.y < player.y + player.height &&
       this.y + this.height > player.y
     );
-  }
-
-  draw(ctx) {
-    ctx.save();
-
-    //will remove these when i add sprites for now this is the coin
-    // Apply fade out effect
-    ctx.globalAlpha = this.fadeOut;
-
-    // Move to coin's center for rotation
-    ctx.translate(this.x + this.width / 2, this.y + this.height / 2);
-    ctx.rotate(this.rotation);
-
-    // Draw the coin
-    ctx.fillStyle = "#FFD700";
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Add some shading/detail
-    ctx.strokeStyle = "#DAA520";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.ellipse(0, 0, this.width / 2, this.height / 2, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.restore();
   }
 }

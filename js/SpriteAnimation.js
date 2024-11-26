@@ -5,7 +5,7 @@ class SpriteAnimation {
     this.frameHeight = frameHeight;
     this.currentFrame = 0;
     this.frameTimer = 0;
-    this.frameDelay = 60; // Frames to wait before changing animation frame
+    this.frameDelay = 10; // Frames to wait before changing animation frame
 
     this.states = {
       idleRight: {

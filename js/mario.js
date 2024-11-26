@@ -22,7 +22,7 @@ class Player extends Sprite {
     this.groundSpeed = 0; // Track ground speed before jumping
 
     this.spriteSheet = new Image();
-    this.spriteSheet.src = "smb_mario_sheet.png";
+    this.spriteSheet.src = "../images/smb_mario_sheet.png";
 
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
   }

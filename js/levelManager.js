@@ -78,26 +78,54 @@ class LevelManager {
         { x: 2100, width: 900, height: 32 },
       ],
       blocks: [
-        // First screen
+        // First screen - blocks touching each other
         { x: 400, y: 400, type: "brick" },
-        { x: 434, y: 400, type: "question" },
-        { x: 468, y: 400, type: "brick" },
+        { x: 430, y: 400, type: "question" }, // Changed from 434
+        { x: 459, y: 400, type: "brick" }, // Changed from 468
+
         // Second screen
         { x: 800, y: 350, type: "brick" },
-        { x: 834, y: 350, type: "question" },
-        { x: 868, y: 350, type: "brick" },
+        { x: 832, y: 350, type: "question" }, // Changed from 834
+        { x: 864, y: 350, type: "brick" }, // Changed from 868
+
         // Third screen
         { x: 1200, y: 300, type: "question" },
-        { x: 1234, y: 300, type: "brick" },
-        { x: 1268, y: 300, type: "question" },
+        { x: 1232, y: 300, type: "brick" }, // Changed from 1234
+        { x: 1264, y: 300, type: "question" }, // Changed from 1268
+
         // Fourth screen
         { x: 1600, y: 400, type: "brick" },
-        { x: 1634, y: 400, type: "question" },
-        { x: 1668, y: 400, type: "brick" },
+        { x: 1632, y: 400, type: "question" }, // Changed from 1634
+        { x: 1664, y: 400, type: "brick" }, // Changed from 1668
+
         // Fifth screen
         { x: 2000, y: 350, type: "question" },
-        { x: 2034, y: 350, type: "brick" },
-        { x: 2068, y: 350, type: "question" },
+        { x: 2032, y: 350, type: "brick" }, // Changed from 2034
+        { x: 2064, y: 350, type: "question" }, // Changed from 2068
+      ],
+      coins: [
+        // Line of coins on first ground segment
+        { x: 100, y: 500 },
+        { x: 150, y: 500 },
+        { x: 200, y: 500 },
+        { x: 250, y: 500 },
+
+        // Coins in a vertical line
+        { x: 300, y: 450 },
+        { x: 300, y: 400 },
+        { x: 300, y: 350 },
+
+        // Coins in an arc
+        { x: 350, y: 480 },
+        { x: 400, y: 460 },
+        { x: 450, y: 450 },
+        { x: 500, y: 460 },
+        { x: 550, y: 480 },
+
+        // Coins near blocks
+        { x: 400, y: 320 },
+        { x: 432, y: 320 },
+        { x: 464, y: 320 },
       ],
     });
 
