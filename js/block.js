@@ -82,14 +82,18 @@ class Block extends Sprite {
     this.hitAnimation = 1;
     if (this.type === "question") {
       this.hit = true;
+
+      // Create coin at the top of the block
+      const coin = new Coin(
+        this.x + (this.width - 24) / 2, // Center coin horizontally
+        this.y, // Start at block's top
+        true // This is a pop-out coin
+      );
+      sprites.push(coin);
+
+      // Add cooldown to prevent multiple hits
+      this.hitCooldown = 10;
     }
-
-    // Create a coin slightly above the block
-    const coin = new Coin(this.x + this.width / 2 - 10, this.y - 40);
-    sprites.push(coin);
-
-    // Add cooldown to prevent multiple hits
-    this.hitCooldown = 10;
   }
 
   checkCollision(player) {

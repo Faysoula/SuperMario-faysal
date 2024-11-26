@@ -1,64 +1,120 @@
 class Coin extends Sprite {
-  constructor(x, y) {
+  constructor(x, y, isPopOut = false) {
     super();
     this.x = x;
     this.y = y;
-    this.width = 32;
-    this.height = 32;
+    this.width = 24;
+    this.height = 24;
     this.collected = false;
     this.startY = y;
 
-    // Physics properties
-    this.velocityY = -15;
-    this.gravity = 0.8;
+    // Sprite sheet setup
+    this.spriteSheet = new Image();
+    this.spriteSheet.src = "../images/coin.png";
+
+    // Animation frames with exact coordinates
+    this.frames = [
+      { x: 6, y: 34 },
+      { x: 23, y: 34 },
+      { x: 40, y: 34 },
+      { x: 23, y: 34 },
+    ];
+
+    // Animation properties
+    this.frameIndex = 0;
+    this.frameTimer = 0;
+    this.frameDelay = 8;
+    this.sourceTileSize = 16;
+
+    // Pop-out behavior
+    this.isPopOut = isPopOut;
+    if (this.isPopOut) {
+      this.velocityY = -8;
+      this.state = "rising";
+      this.maxRiseHeight = y - 64; // Maximum height coin will rise
+    } else {
+      this.velocityY = 0;
+      this.state = "static";
+    }
+
+    this.gravity = 0.5;
     this.fadeOut = 1.0;
-
-    // Load the animated GIF directly
-    this.sprite = new Image();
-    this.sprite.src = "../images/Coin.gif"; // Make sure the coin.gif is in your images folder
-
-    // Track animation state
-    this.state = "rising"; // states: rising, falling, removing
   }
 
   update(sprites) {
-    // Apply physics
-    this.velocityY += this.gravity;
-    this.y += this.velocityY;
+    // Update animation for both static and pop-out coins
+    this.frameTimer++;
+    if (this.frameTimer >= this.frameDelay) {
+      this.frameTimer = 0;
+      this.frameIndex = (this.frameIndex + 1) % this.frames.length;
+    }
 
-    // State machine for coin animation
-    switch (this.state) {
-      case "rising":
-        if (this.velocityY > 0) {
-          this.state = "falling";
-        }
-        break;
-
-      case "falling":
-        if (this.y >= this.startY) {
+    // Handle collection for static coins
+    if (!this.isPopOut) {
+      sprites.forEach((sprite) => {
+        if (
+          sprite instanceof Player &&
+          this.checkCollision(sprite) &&
+          !this.collected
+        ) {
+          this.collected = true;
           this.state = "removing";
         }
-        break;
+      });
+    }
 
-      case "removing":
-        this.fadeOut -= 0.2;
-        if (this.fadeOut <= 0) {
-          return true; // Remove the coin
-        }
-        break;
+    // Handle pop-out physics
+    if (this.isPopOut) {
+      switch (this.state) {
+        case "rising":
+          this.y += this.velocityY;
+          if (this.y <= this.maxRiseHeight) {
+            this.state = "falling";
+          }
+          break;
+
+        case "falling":
+          this.velocityY += this.gravity;
+          this.y += this.velocityY;
+          if (this.y >= this.startY) {
+            this.state = "removing";
+          }
+          break;
+      }
+    }
+
+    // Handle removal
+    if (this.state === "removing") {
+      this.fadeOut -= 0.2;
+      if (this.fadeOut <= 0) {
+        return true; // Remove the coin
+      }
     }
 
     return false;
   }
 
   draw(ctx) {
-    if (!this.sprite.complete) return;
+    if (!this.spriteSheet.complete) return;
 
     ctx.save();
     ctx.globalAlpha = this.fadeOut;
 
-    // Draw the animated GIF
-    ctx.drawImage(this.sprite, this.x, this.y, this.width, this.height);
+    // Get current frame
+    const frame = this.frames[this.frameIndex];
+
+    // Draw the coin
+    ctx.drawImage(
+      this.spriteSheet,
+      frame.x,
+      frame.y,
+      this.sourceTileSize,
+      this.sourceTileSize,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
 
     ctx.restore();
   }
