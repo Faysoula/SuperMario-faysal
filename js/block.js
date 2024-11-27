@@ -11,14 +11,15 @@ class Block extends Sprite {
     this.originalY = y;
     this.hitCooldown = 0;
 
-    // Sprite sheet setup
     this.spriteSheet = new Image();
-    this.spriteSheet.src = "../images/blocks.png";
+    this.stairSpriteSheet = new Image();
 
-    // Question block animation properties
+    this.spriteSheet.src = "../images/blocks.png";
+    this.stairSpriteSheet.src = "../images/giant tileset.png";
+
     this.frameIndex = 0;
     this.frameTimer = 0;
-    this.frameDelay = 15; // Controls animation speed
+    this.frameDelay = 15;
     this.questionBlockFrames = [
       { x: 80, y: 112 },
       { x: 96, y: 112 },
@@ -27,6 +28,7 @@ class Block extends Sprite {
     ];
     this.hitFrame = { x: 128, y: 112 };
     this.brickFrame = { x: 272, y: 112 };
+    this.stairFrame = { x: 0, y: 33 };
   }
 
   update(sprites, keys) {
@@ -139,38 +141,49 @@ class Block extends Sprite {
   }
 
   draw(ctx) {
-    if (!this.spriteSheet.complete) return;
+    if (this.type === "stair") {
+      if (!this.stairSpriteSheet.complete) return;
+      ctx.drawImage(
+        this.stairSpriteSheet,
+        this.stairFrame.x,
+        this.stairFrame.y,
+        16,
+        16,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+      return;
+    }
 
+    if (!this.spriteSheet.complete) return;
     let sourceX, sourceY;
 
     if (this.type === "brick") {
-      // Use brick sprite
       sourceX = this.brickFrame.x;
       sourceY = this.brickFrame.y;
     } else if (this.type === "question") {
       if (this.hit) {
-        // Use hit frame for question block
         sourceX = this.hitFrame.x;
         sourceY = this.hitFrame.y;
       } else {
-        // Use current animation frame for question block
         const currentFrame = this.questionBlockFrames[this.frameIndex];
         sourceX = currentFrame.x;
         sourceY = currentFrame.y;
       }
     }
 
-    // Draw the block sprite
     ctx.drawImage(
       this.spriteSheet,
       sourceX,
       sourceY,
-      16, // Source width (sprite size)
-      16, // Source height (sprite size)
+      16,
+      16,
       this.x,
       this.y,
-      this.width, // Destination width (scaled up)
-      this.height // Destination height (scaled up)
+      this.width,
+      this.height
     );
   }
 

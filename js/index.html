@@ -1,48 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>super faysal</title>
+    <title>Faysal is falling asleep</title>
     <style>
         body {
             margin: 0;
-            padding: 0;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 50vh;
-            background-color: #1a1a1a;
-        }
-
-        .game-container {
-            position: relative;
-            width: 900px;
-            height: 100px;
-            border: 4px solid #333;
-            border-radius: 8px;
+            min-height: 100vh;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         }
-
         canvas {
-            width: 70%;
-            height: 70%;
-            background-color: #5c94fc; /* Classic Mario sky blue */
+            image-rendering: pixelated;
+            width: 848px;
+            height: 480px;
+            background: #9494ff;
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="900" height="500"></canvas>
+    <canvas id="canvas" width="848" height="480"></canvas>
+
+    <script src="game.js"></script>
     <script src="camera.js"></script>
+    <script src="block.js"></script>
+    <script src="coin.js"></script>
+    <script src="goomba.js"></script>
+    <script src="pipe.js"></script>
+    <script src="platform.js"></script>
+    <script src="mario.js"></script>
     <script src="SpriteAnimation.js"></script>
     <script src="levelManager.js"></script>
-    <script src="game.js"></script>
-    <script src="mario.js"></script>
-    <script src="platform.js"></script>
-    <script src="block.js"></script>
-    <script src="goomba.js"></script>
-    <script src="coin.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
