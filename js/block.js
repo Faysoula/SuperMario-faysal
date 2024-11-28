@@ -3,9 +3,17 @@ class Block extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 30;
-    this.height = 30;
     this.type = type;
+
+    // Set size based on block type
+    if (this.type === "stair") {
+      this.width = 32;
+      this.height = 32;
+    } else {
+      this.width = 30;
+      this.height = 30;
+    }
+
     this.hit = false;
     this.hitAnimation = 0;
     this.originalY = y;
@@ -78,32 +86,59 @@ class Block extends Sprite {
     return false;
   }
 
-  handleHit(sprites) {
-    if (this.hit || this.hitCooldown > 0) return;
-
-    this.hitAnimation = 1;
-    if (this.type === "question") {
-      this.hit = true;
-
-      // Create coin at the top of the block
-      const coin = new Coin(
-        this.x + (this.width - 24) / 2, // Center coin horizontally
-        this.y, // Start at block's top
-        true // This is a pop-out coin
+  draw(ctx) {
+    if (this.type === "stair") {
+      if (!this.stairSpriteSheet.complete) return;
+      ctx.drawImage(
+        this.stairSpriteSheet,
+        this.stairFrame.x,
+        this.stairFrame.y,
+        16,
+        16,
+        this.x,
+        this.y,
+        32, // Fixed size for stairs
+        32
       );
-      sprites.push(coin);
-
-      // Add cooldown to prevent multiple hits
-      this.hitCooldown = 10;
+      return;
     }
+
+    if (!this.spriteSheet.complete) return;
+    let sourceX, sourceY;
+
+    if (this.type === "brick") {
+      sourceX = this.brickFrame.x;
+      sourceY = this.brickFrame.y;
+    } else if (this.type === "question") {
+      if (this.hit) {
+        sourceX = this.hitFrame.x;
+        sourceY = this.hitFrame.y;
+      } else {
+        const currentFrame = this.questionBlockFrames[this.frameIndex];
+        sourceX = currentFrame.x;
+        sourceY = currentFrame.y;
+      }
+    }
+
+    ctx.drawImage(
+      this.spriteSheet,
+      sourceX,
+      sourceY,
+      16,
+      16,
+      this.x,
+      this.y,
+      30, // Fixed size for brick and question blocks
+      30
+    );
   }
 
-  checkCollision(player) {
+  checkCollision(sprite) {
     return (
-      this.x < player.x + player.width &&
-      this.x + this.width > player.x &&
-      this.y < player.y + player.height &&
-      this.y + this.height > player.y
+      this.x < sprite.x + sprite.width &&
+      this.x + this.width > sprite.x &&
+      this.y < sprite.y + sprite.height &&
+      this.y + this.height > sprite.y
     );
   }
 
@@ -140,53 +175,6 @@ class Block extends Sprite {
     }
   }
 
-  draw(ctx) {
-    if (this.type === "stair") {
-      if (!this.stairSpriteSheet.complete) return;
-      ctx.drawImage(
-        this.stairSpriteSheet,
-        this.stairFrame.x,
-        this.stairFrame.y,
-        16,
-        16,
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
-      return;
-    }
-
-    if (!this.spriteSheet.complete) return;
-    let sourceX, sourceY;
-
-    if (this.type === "brick") {
-      sourceX = this.brickFrame.x;
-      sourceY = this.brickFrame.y;
-    } else if (this.type === "question") {
-      if (this.hit) {
-        sourceX = this.hitFrame.x;
-        sourceY = this.hitFrame.y;
-      } else {
-        const currentFrame = this.questionBlockFrames[this.frameIndex];
-        sourceX = currentFrame.x;
-        sourceY = currentFrame.y;
-      }
-    }
-
-    ctx.drawImage(
-      this.spriteSheet,
-      sourceX,
-      sourceY,
-      16,
-      16,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-  }
-
   isHittingFromBelow(player) {
     const playerHeadY = player.y;
     const blockBottomY = this.y + this.height;
@@ -197,5 +185,25 @@ class Block extends Sprite {
     const movingUp = player.velocityY < 0;
 
     return verticalOverlap && horizontalOverlap && movingUp;
+  }
+
+  handleHit(sprites) {
+    if (this.hit || this.hitCooldown > 0) return;
+
+    this.hitAnimation = 1;
+    if (this.type === "question") {
+      this.hit = true;
+
+      // Create coin at the top of the block
+      const coin = new Coin(
+        this.x + (this.width - 24) / 2, // Center coin horizontally
+        this.y, // Start at block's top
+        true // This is a pop-out coin
+      );
+      sprites.push(coin);
+
+      // Add cooldown to prevent multiple hits
+      this.hitCooldown = 10;
+    }
   }
 }

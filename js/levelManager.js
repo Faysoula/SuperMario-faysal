@@ -56,20 +56,21 @@ class LevelManager {
   defineLevels() {
     this.levels.push({
       id: "1-1",
-      width: 3392,
+      width: 6000,
       height: 480,
-      playerSpawn: { x: 1654, y: 380 },
+      playerSpawn: { x: 3301, y: 380 },
 
       // Ground segments - Now with gaps
       groundSegments: [
         { x: 0, width: 1584, height: 32 }, // First section up to first gap (1262 + 322)
         { x: 1654, width: 477, height: 32 }, // Ground after first 2-block gap
-        { x: 2230, width: 1271, height: 32 }, // Ground after second gap (475 + remaining)
+        { x: 2230, width: 1700, height: 32 },
+        { x: 4022, width: 1700, height: 32 },
       ],
 
       // Block placements - includes both first screen and new section
       blocks: [
-        // First screen blocks (keeping your existing perfect layout)
+        // Previous blocks remain unchanged
         { x: 256, y: 272, type: "question" },
         { x: 320, y: 272, type: "brick" },
         { x: 350, y: 272, type: "question" },
@@ -77,23 +78,174 @@ class LevelManager {
         { x: 410, y: 272, type: "question" },
         { x: 440, y: 272, type: "brick" },
         { x: 380, y: 144, type: "question" },
-
-        // New section blocks
-        // Blocks 100px above ground (380 - 100 = 280)
-        { x: 1835, y: 320, type: "brick" }, // First brick
-        { x: 1865, y: 320, type: "question" }, // Question block
-        { x: 1895, y: 320, type: "brick" }, // Third brick
-        { x: 1925, y: 320, type: "brick" }, // Fourth brick
-
-        // Row of 7 bricks 98px above last brick
-        { x: 1955, y: 220, type: "brick" }, // First of seven
+        { x: 1835, y: 320, type: "brick" },
+        { x: 1865, y: 320, type: "question" },
+        { x: 1895, y: 320, type: "brick" },
+        { x: 1925, y: 320, type: "brick" },
+        { x: 1955, y: 220, type: "brick" },
         { x: 1985, y: 220, type: "brick" },
         { x: 2015, y: 220, type: "brick" },
         { x: 2045, y: 220, type: "brick" },
         { x: 2075, y: 220, type: "brick" },
         { x: 2105, y: 220, type: "brick" },
         { x: 2135, y: 220, type: "brick" },
-            ],
+
+        // New section (65px after last gap, at height 233)
+        // Three brick blocks and a question block together
+        { x: 2295, y: 233, type: "brick" },
+        { x: 2325, y: 233, type: "brick" },
+        { x: 2355, y: 233, type: "brick" },
+        { x: 2385, y: 233, type: "question" },
+
+        // Block 100px below question block
+        { x: 2385, y: 320, type: "brick" },
+
+        // Two blocks 160px to the right
+        { x: 2545, y: 320, type: "brick" },
+        { x: 2575, y: 320, type: "brick" },
+
+        // Three question blocks 127px further, 100px off ground (320px height)
+        { x: 2702, y: 320, type: "question" },
+        { x: 2768, y: 320, type: "question" }, // +66px
+        { x: 2834, y: 320, type: "question" }, // +66px
+
+        // Question block above middle question block
+        { x: 2768, y: 224, type: "question" }, // 96px above middle block
+        // Single brick block 159px to the right of last question block
+        { x: 2993, y: 320, type: "brick" },
+
+        // Three brick blocks 62px to the right at height 224
+        { x: 3055, y: 224, type: "brick" },
+        { x: 3085, y: 224, type: "brick" },
+        { x: 3115, y: 224, type: "brick" },
+
+        // Brick-Question-Question-Brick pattern 126px to the right
+        { x: 3241, y: 224, type: "brick" },
+        { x: 3271, y: 224, type: "question" },
+        { x: 3301, y: 224, type: "question" },
+        { x: 3331, y: 224, type: "brick" },
+
+        // Two brick blocks 100px below the question blocks
+        { x: 3262, y: 324, type: "brick" },
+        { x: 3292, y: 324, type: "brick" },
+
+        // First staircase
+        // Bottom row - 4 blocks
+        { x: 3413, y: 416, type: "stair" },
+        { x: 3445, y: 416, type: "stair" },
+        { x: 3477, y: 416, type: "stair" },
+        { x: 3510, y: 416, type: "stair" },
+
+        // Second row - 3 blocks
+        { x: 3447, y: 384, type: "stair" },
+        { x: 3479, y: 384, type: "stair" },
+        { x: 3511, y: 384, type: "stair" },
+
+        // Third row - 2 blocks
+        { x: 3479, y: 352, type: "stair" },
+        { x: 3511, y: 352, type: "stair" },
+
+        // Top block
+        { x: 3511, y: 320, type: "stair" },
+
+        // Next staircase
+        { x: 3575, y: 416, type: "stair" },
+        { x: 3607, y: 416, type: "stair" },
+        { x: 3639, y: 416, type: "stair" },
+        { x: 3671, y: 416, type: "stair" },
+        { x: 3575, y: 384, type: "stair" },
+        { x: 3607, y: 384, type: "stair" },
+        { x: 3639, y: 384, type: "stair" },
+        { x: 3575, y: 352, type: "stair" },
+        { x: 3607, y: 352, type: "stair" },
+        { x: 3575, y: 320, type: "stair" },
+
+        // Bigger staircase
+        { x: 3799, y: 416, type: "stair" },
+        { x: 3831, y: 416, type: "stair" },
+        { x: 3863, y: 416, type: "stair" },
+        { x: 3895, y: 416, type: "stair" },
+        { x: 3927, y: 416, type: "stair" },
+        { x: 3831, y: 384, type: "stair" },
+        { x: 3863, y: 384, type: "stair" },
+        { x: 3895, y: 384, type: "stair" },
+        { x: 3927, y: 384, type: "stair" },
+        { x: 3863, y: 352, type: "stair" },
+        { x: 3895, y: 352, type: "stair" },
+        { x: 3927, y: 352, type: "stair" },
+        { x: 3895, y: 320, type: "stair" },
+        { x: 3927, y: 320, type: "stair" },
+
+        // Final staircase (inverted)
+        { x: 4023, y: 416, type: "stair" },
+        { x: 4055, y: 416, type: "stair" },
+        { x: 4087, y: 416, type: "stair" },
+        { x: 4119, y: 416, type: "stair" },
+        { x: 4023, y: 384, type: "stair" },
+        { x: 4055, y: 384, type: "stair" },
+        { x: 4087, y: 384, type: "stair" },
+        { x: 4023, y: 352, type: "stair" },
+        { x: 4055, y: 352, type: "stair" },
+        { x: 4023, y: 320, type: "stair" },
+
+        { x: 4351, y: 272, type: "brick" },
+        { x: 4381, y: 272, type: "brick" },
+        { x: 4411, y: 272, type: "question" },
+        { x: 4441, y: 272, type: "brick" },
+
+        // Final staircase (base of 9, 10px after second pipe)
+        { x: 4760, y: 416, type: "stair" },
+        { x: 4792, y: 416, type: "stair" },
+        { x: 4824, y: 416, type: "stair" },
+        { x: 4856, y: 416, type: "stair" },
+        { x: 4888, y: 416, type: "stair" },
+        { x: 4920, y: 416, type: "stair" },
+        { x: 4952, y: 416, type: "stair" },
+        { x: 4984, y: 416, type: "stair" },
+        { x: 5016, y: 416, type: "stair" }, // Base row (9 blocks)
+
+        { x: 4792, y: 384, type: "stair" },
+        { x: 4824, y: 384, type: "stair" },
+        { x: 4856, y: 384, type: "stair" },
+        { x: 4888, y: 384, type: "stair" },
+        { x: 4920, y: 384, type: "stair" },
+        { x: 4952, y: 384, type: "stair" },
+        { x: 4984, y: 384, type: "stair" },
+        { x: 5016, y: 384, type: "stair" }, // Second row (8 blocks)
+
+        { x: 4824, y: 352, type: "stair" },
+        { x: 4856, y: 352, type: "stair" },
+        { x: 4888, y: 352, type: "stair" },
+        { x: 4920, y: 352, type: "stair" },
+        { x: 4952, y: 352, type: "stair" },
+        { x: 4984, y: 352, type: "stair" },
+        { x: 5016, y: 352, type: "stair" }, // Third row (7 blocks)
+
+        { x: 4856, y: 320, type: "stair" },
+        { x: 4888, y: 320, type: "stair" },
+        { x: 4920, y: 320, type: "stair" },
+        { x: 4952, y: 320, type: "stair" },
+        { x: 4984, y: 320, type: "stair" },
+        { x: 5016, y: 320, type: "stair" }, // Fourth row (6 blocks)
+
+        { x: 4888, y: 288, type: "stair" },
+        { x: 4920, y: 288, type: "stair" },
+        { x: 4952, y: 288, type: "stair" },
+        { x: 4984, y: 288, type: "stair" },
+        { x: 5016, y: 288, type: "stair" }, // Fifth row (5 blocks)
+
+        { x: 4920, y: 256, type: "stair" },
+        { x: 4952, y: 256, type: "stair" },
+        { x: 4984, y: 256, type: "stair" },
+        { x: 5016, y: 256, type: "stair" }, // Sixth row (4 blocks)
+
+        { x: 4952, y: 224, type: "stair" },
+        { x: 4984, y: 224, type: "stair" },
+        { x: 5016, y: 224, type: "stair" }, // Seventh row (3 blocks)
+
+        { x: 4984, y: 192, type: "stair" },
+        { x: 5016, y: 192, type: "stair" }, // Eighth row (2 blocks)
+      ],
 
       // Keeping your existing pipe placements
       pipes: [
@@ -101,6 +253,8 @@ class LevelManager {
         { x: 764, y: 354, size: "medium" },
         { x: 965, y: 320, size: "large" },
         { x: 1262, y: 320, size: "large" },
+        { x: 4251, y: 387, size: "small" }, // 132px from last stair
+        { x: 4574, y: 387, size: "small" }, // 223px after block group
       ],
 
       // Keeping your existing enemy placements
