@@ -12,6 +12,17 @@ class Castle extends Sprite {
     this.isPlayerEntering = false;
     this.levelManager = null;
     this.entranceX = this.x + 64;
+
+    this.flagSprite = new Image();
+    this.flagSprite.src = "../images/castle-flag.png";
+    this.flagY = this.y; // Start at bottom of castle
+    this.flagTargetY = this.y - 40; // Rise to top
+    this.flagRising = false;
+    this.flagRiseSpeed = 2;
+
+    this.entryDelay = 30;
+    this.entryTimer = 0;
+    this.levelChangeTriggered = false;
   }
 
   setLevelManager(levelManager) {
@@ -30,57 +41,73 @@ class Castle extends Sprite {
     sprites.forEach((sprite) => {
       if (sprite instanceof Player) {
         if (!sprite.isSlidingPole && !sprite.isEnteringCastle) {
-          // Start castle entry sequence once pole slide is complete
           sprite.startCastleEntry(this);
+        }
+        // Start flag rising when player is fully inside castle
+        if (
+          sprite.isEnteringCastle &&
+          sprite.entryPhase === "entering" &&
+          !this.flagRising
+        ) {
+          this.flagRising = true;
         }
       }
     });
+
+    // Update flag position
+    if (this.flagRising && this.flagY > this.flagTargetY) {
+      this.flagY -= this.flagRiseSpeed;
+      if (this.flagY <= this.flagTargetY) {
+        this.flagY = this.flagTargetY;
+      }
+    }
+
+    if (this.flagRising && !this.levelChangeTriggered) {
+      this.entryTimer++;
+      if (this.entryTimer >= this.entryDelay) {
+        this.levelChangeTriggered = true;
+        if (this.levelManager) {
+          this.levelManager.nextLevel();
+        }
+      }
+    }
+
     return false;
   }
 
   draw(ctx) {
     if (!this.spriteSheet.complete) return;
 
-    // Calculate the castle's vertical midpoint
-    const castleMidY = this.y + this.height / 2;
-    const player = this.findPlayer();
-    const playerBottom = player ? player.y + player.height : 0;
-
-    // Draw the top part of the castle
+    // Draw the flag
+    if (this.flagSprite.complete) {
+      ctx.drawImage(
+        this.flagSprite,
+        this.x + this.width/2 -94,
+        this.flagY + 10,
+        32,
+        32
+      );
+    }
+    // Draw the castle
     ctx.drawImage(
       this.spriteSheet,
       this.castleSprite.x,
       this.castleSprite.y,
       160,
-      80,
+      160,
       this.x,
       this.y,
       this.width,
-      this.height / 2
+      this.height
     );
 
-    // If player exists and their bottom is above the castle's midpoint,
-    // draw them now (they'll appear behind the bottom part)
+
+    // Calculate the castle's vertical midpoint for player drawing
+    const castleMidY = this.y + this.height / 2;
+    const player = this.findPlayer();
+    const playerBottom = player ? player.y + player.height : 0;
+
     if (player && playerBottom <= castleMidY && this.isPlayerEntering) {
-      player.draw(ctx);
-    }
-
-    // Draw bottom part of castle
-    ctx.drawImage(
-      this.spriteSheet,
-      this.castleSprite.x,
-      this.castleSprite.y + 80,
-      160,
-      80,
-      this.x,
-      this.y + this.height / 2,
-      this.width,
-      this.height / 2
-    );
-
-    // If player exists and their bottom is below the castle's midpoint,
-    // draw them now (they'll appear in front of the bottom part)
-    if (player && playerBottom > castleMidY && this.isPlayerEntering) {
       player.draw(ctx);
     }
   }
