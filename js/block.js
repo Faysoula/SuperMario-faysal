@@ -48,7 +48,7 @@ class Block extends Sprite {
       if (sprite instanceof Player) {
         // First check for hit from below
         if (
-          this.type === "question" &&
+          (this.type === "question" || this.type === "brick") &&
           !this.hit &&
           this.isHittingFromBelow(sprite)
         ) {
@@ -191,6 +191,8 @@ class Block extends Sprite {
     if (this.hit || this.hitCooldown > 0) return;
 
     this.hitAnimation = 1;
+    this.hitCooldown = 10;
+
     if (this.type === "question") {
       this.hit = true;
 
@@ -201,9 +203,10 @@ class Block extends Sprite {
         true // This is a pop-out coin
       );
       sprites.push(coin);
-
-      // Add cooldown to prevent multiple hits
-      this.hitCooldown = 10;
+    }
+    // Add animation for brick blocks too
+    else if (this.type === "brick") {
+      this.hitAnimation = 1;
     }
   }
 }

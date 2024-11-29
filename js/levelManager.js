@@ -13,13 +13,15 @@ class LevelManager {
       this.currentLevel = levelIndex;
 
       this.game.setLevelBoundaries(levelData.width, levelData.height);
-      this.game.camera.x = 0;
-      this.game.camera.y = 0;
+      this.game.camera.reset();
 
       const player = new Player(
         levelData.playerSpawn.x,
-        levelData.playerSpawn.y
+        levelData.playerSpawn.y,
+        this.game.camera
       );
+
+      player.setLevelManager(this);
       player.spawnX = levelData.playerSpawn.x;
       player.spawnY = levelData.playerSpawn.y;
       this.game.addSprite(player);

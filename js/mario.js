@@ -1,8 +1,10 @@
 class Player extends Sprite {
-  constructor(x, y) {
+  constructor(x, y,camera) {
     super();
     this.x = x;
     this.y = y;
+    this.camera = camera;
+    this.levelManager = null;
     this.width = 30;
     this.height = 30;
     this.velocityX = 0;
@@ -29,6 +31,10 @@ class Player extends Sprite {
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
   }
 
+  setLevelManager(levelManager) {
+    this.levelManager = levelManager;
+  }
+
   startFlagpoleSlide(flagpole) {
     this.isSlidingPole = true;
     this.x = flagpole.x - this.width / 2;
@@ -53,13 +59,13 @@ class Player extends Sprite {
     }
   }
 
-  update(sprites, keys) {
+  update(sprites, keys, camera) {
     if (this.isDying) {
       this.velocityY += this.deathGravity;
       this.y += this.velocityY;
 
       if (this.y > 800) {
-        this.respawn();
+        this.respawn(camera);
       }
       return false;
     }
@@ -153,13 +159,21 @@ class Player extends Sprite {
   }
 
   respawn() {
-    this.x = this.spawnX;
-    this.y = this.spawnY;
-    this.velocityX = 0;
-    this.velocityY = 0;
-    this.isDying = false;
-    this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
-  }
+        this.x = this.spawnX;
+        this.y = this.spawnY;
+        this.velocityX = 0;
+        this.velocityY = 0;
+        this.isDying = false;
+        this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
+        
+        if (this.camera) {
+            this.camera.reset();
+        }
+
+        if (this.levelManager) {
+          this.levelManager.restartLevel();
+        }
+    }
 
   checkCollision(platform) {
     return (

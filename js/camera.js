@@ -6,16 +6,14 @@ class Camera {
     this.width = canvas.width;
     this.height = canvas.height;
 
-    // Camera behavior configuration
-    this.leftOffset = 160; // Distance from left edge where player should stay
-    this.rightOffset = 160; // Distance from right edge where player should stop camera
-    this.verticalDeadzone = 50; // Vertical deadzone for smooth platform transitions
-    this.horizontalSmoothing = 0.1; // Camera smoothing factor for horizontal movement
-    this.verticalSmoothing = 0.05; // Camera smoothing factor for vertical movement
-
-    // Level boundaries
+    // Camera should only start following when player is past screen center
+    this.triggerPoint = this.width / 2.5; // Middle of screen
     this.maxX = 0;
     this.maxY = 0;
+
+    // Keep vertical movement smooth
+    this.verticalSmoothing = 0.05;
+    this.verticalDeadzone = 50;
   }
 
   setLevelBoundaries(width, height) {
@@ -26,19 +24,20 @@ class Camera {
   update(player) {
     if (!player) return;
 
-    // Calculate target camera position
-    let targetX = player.x - this.leftOffset;
+    // Only move camera if player is past screen center and moving right
+    if (player.x > this.x + this.triggerPoint) {
+      this.x = player.x - this.triggerPoint;
+    }
+
+    // Prevent backwards scrolling
+    if (this.x < 0) this.x = 0;
+
+    // Prevent scrolling past level end
+    if (this.x > this.maxX) this.x = this.maxX;
+
+    // Handle vertical camera movement
     let targetY = player.y - this.height / 2;
-
-    // Prevent backward scrolling
-    targetX = Math.max(targetX, this.x);
-
-    // Apply level boundaries
-    targetX = Math.max(0, Math.min(targetX, this.maxX));
     targetY = Math.max(0, Math.min(targetY, this.maxY));
-
-    // Smooth camera movement
-    this.x += (targetX - this.x) * this.horizontalSmoothing;
 
     // Only adjust vertical position if change is significant
     if (Math.abs(targetY - this.y) > this.verticalDeadzone) {
@@ -69,14 +68,17 @@ class Camera {
     );
   }
 
-  // Apply camera transform to context
   begin(ctx) {
     ctx.save();
     ctx.translate(-this.x, -this.y);
   }
 
-  // Restore context state
   end(ctx) {
     ctx.restore();
+  }
+
+  reset() {
+    this.x = 0;
+    this.y = 0;
   }
 }
