@@ -29,6 +29,21 @@ class Player extends Sprite {
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
   }
 
+  startFlagpoleSlide(flagpole) {
+    this.isSlidingPole = true;
+    this.x = flagpole.x - this.width / 2;
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.animation.setState("flagpoleLeft");
+  }
+
+  endFlagpoleSlide() {
+    this.isSlidingPole = false;
+    this.animation.setState("flagpoleJumpOff");
+    this.velocityX = 2; // Jump right
+    this.velocityY = -4; // Small jump
+  }
+
   die() {
     if (!this.isDying) {
       this.isDying = true;

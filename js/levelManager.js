@@ -50,6 +50,13 @@ class LevelManager {
         const newPipe = new Pipe(pipe.x, pipe.y, pipe.size);
         this.game.addSprite(newPipe);
       });
+      if (levelData.levelEnd?.flagpole) {
+        const flagpole = new FlagPole(
+          levelData.levelEnd.flagpole.x,
+          levelData.levelEnd.flagpole.y
+        );
+        this.game.addSprite(flagpole);
+      }
     }
   }
 
@@ -58,14 +65,14 @@ class LevelManager {
       id: "1-1",
       width: 6000,
       height: 480,
-      playerSpawn: { x: 3301, y: 380 },
+      playerSpawn: { x: 220, y: 380 },
 
       // Ground segments - Now with gaps
       groundSegments: [
         { x: 0, width: 1584, height: 32 }, // First section up to first gap (1262 + 322)
         { x: 1654, width: 477, height: 32 }, // Ground after first 2-block gap
         { x: 2230, width: 1700, height: 32 },
-        { x: 4022, width: 1700, height: 32 },
+        { x: 4022, width: 2000, height: 32 },
       ],
 
       // Block placements - includes both first screen and new section
@@ -246,6 +253,9 @@ class LevelManager {
         { x: 4984, y: 192, type: "stair" },
         { x: 5016, y: 192, type: "stair" }, // Eighth row (2 blocks)
       ],
+      levelEnd: {
+        flagpole: { x: 5080, y: 96 }, // Position flagpole after final staircase
+      },
 
       // Keeping your existing pipe placements
       pipes: [
@@ -262,7 +272,7 @@ class LevelManager {
         { type: "goomba", x: 380, y: 368 },
         { type: "goomba", x: 965, y: 320 },
         { type: "goomba", x: 1262, y: 320 },
-        { type: "goomba", x: 1200, y: 320 },
+        { type: "goomba", x: 1190, y: 320 },
       ],
     });
   }

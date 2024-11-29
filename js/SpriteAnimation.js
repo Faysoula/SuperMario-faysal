@@ -54,6 +54,18 @@ class SpriteAnimation {
         frames: [{ x: 0, y: 16 }],
         loop: false,
       },
+      flagpoleLeft: {
+        frames: [
+          { x: 331, y: 30 },
+          { x: 361, y: 30 },
+        ],
+        loop: true,
+        frameDelay: 10,
+      },
+      flagpoleJumpOff: {
+        frames: [{ x: 30, y: 30 }],
+        loop: false,
+      },
     };
 
     this.currentState = "idleRight";
