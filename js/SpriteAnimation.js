@@ -5,8 +5,7 @@ class SpriteAnimation {
     this.frameHeight = frameHeight;
     this.currentFrame = 0;
     this.frameTimer = 0;
-    this.frameDelay = 10; // Frames to wait before changing animation frame
-
+    this.frameDelay = 10;
     this.states = {
       idleRight: {
         frames: [{ x: 211, y: 0 }],
@@ -55,12 +54,12 @@ class SpriteAnimation {
         loop: false,
       },
       flagpoleLeft: {
-        frames: [
-          { x: 331, y: 30 },
-          { x: 361, y: 30 },
-        ],
-        loop: true,
-        frameDelay: 10,
+        frames: [{ x: 331, y: 30 }],
+        loop: false,
+      },
+      flagpoleRight: {
+        frames: [{ x: 61, y: 30 }],
+        loop: false,
       },
       flagpoleJumpOff: {
         frames: [{ x: 30, y: 30 }],

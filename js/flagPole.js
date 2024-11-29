@@ -3,77 +3,74 @@ class FlagPole extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 32; // Match sprite dimensions
-    this.height = 384; // Full height for pole + base
-    this.isTriggered = false;
-    this.slideProgress = 0;
-    this.slideSpeed = 0.005;
+    this.width = 16;
+    this.height = 300;
+    this.hasBeenTriggered = false;
 
-    // Add sprite initialization
     this.spriteSheet = new Image();
-    this.spriteSheet.src = "../images/pipes.png";
+    this.spriteSheet.src = "../images/giant tileset.png";
 
-    // Flag sprite coordinates and state
-    this.flag = {
-      currentFrame: 0,
-      frames: [
-        { x: 249, y: 594 },
-        { x: 216, y: 594 },
-        { x: 182, y: 594 },
-        { x: 149, y: 594 },
-        { x: 117, y: 594 },
-      ],
+    // Pole parts coordinates
+    this.poleSprites = {
+      top: { x: 136, y: 230 }, // Original top ball coordinates
+      segment: { x: 143, y: 247 }, // Updated segment coordinates for clean version
     };
   }
 
   update(sprites) {
-    if (this.isTriggered) {
-      this.slideProgress = Math.min(1, this.slideProgress + this.slideSpeed);
-      sprites.forEach((sprite) => {
-        if (sprite instanceof Player && sprite.isSlidingPole) {
-          // Update player's Y position based on slide progress
-          sprite.y =
-            this.y + (this.height - sprite.height - 32) * this.slideProgress; // Adjusted to account for base
-
-          // When reaching bottom, transition to jump off animation
-          if (this.slideProgress >= 1) {
-            sprite.endFlagpoleSlide();
-          }
-        }
-      });
-    } else {
-      sprites.forEach((sprite) => {
-        if (sprite instanceof Player && this.checkCollision(sprite)) {
-          this.isTriggered = true;
+    sprites.forEach((sprite) => {
+      if (sprite instanceof Player && !this.hasBeenTriggered) {
+        if (this.checkCollision(sprite)) {
+          this.hasBeenTriggered = true;
           sprite.startFlagpoleSlide(this);
         }
-      });
-    }
+      }
+    });
     return false;
   }
 
   draw(ctx) {
     if (!this.spriteSheet.complete) return;
 
-    // Draw the flag
-    const frame = this.flag.frames[this.flag.currentFrame];
+    // Draw the ball at the top
     ctx.drawImage(
       this.spriteSheet,
-      frame.x,
-      frame.y,
-      16, // Source dimensions
+      this.poleSprites.top.x,
+      this.poleSprites.top.y,
       16,
-      this.x - 15, // Flag offset from pole
-      this.y,
-      16, // Destination dimensions
+      16,
+      this.x - 6,
+      this.y - 16,
+      16,
       16
     );
+
+    // Draw the pole segments
+    const segmentHeight = 16;
+    const numSegments = Math.floor(this.height / segmentHeight);
+
+    for (let i = 0; i < numSegments; i++) {
+      ctx.drawImage(
+        this.spriteSheet,
+        this.poleSprites.segment.x,
+        this.poleSprites.segment.y,
+        16,
+        16,
+        this.x,
+        this.y + i * segmentHeight,
+        16,
+        16
+      );
+    }
   }
 
   checkCollision(player) {
+    const hitboxWidth = 24;
+    const poleLeft = this.x - (hitboxWidth - this.width) / 2;
+
     return (
-      player.x + player.width > this.x - 5 &&
-      player.x < this.x + this.width + 5 &&
+      player.x + player.width > poleLeft &&
+      player.x < poleLeft + hitboxWidth &&
       player.y < this.y + this.height &&
       player.y + player.height > this.y
     );

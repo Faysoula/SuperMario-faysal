@@ -1,5 +1,5 @@
 class Player extends Sprite {
-  constructor(x, y,camera) {
+  constructor(x, y, camera) {
     super();
     this.x = x;
     this.y = y;
@@ -25,6 +25,15 @@ class Player extends Sprite {
     this.isDying = false;
     this.deathJumpVelocity = -12;
     this.deathGravity = 0.5;
+    this.isSlidingPole = false;
+    this.slideStartY = 0;
+    this.slideEndY = 0;
+    this.slideProgress = 0;
+    this.slideSpeed = 0.009;
+    this.hasCompletedSlide = false;
+    this.endSlideDelay = 0;
+    this.endSlideDelayMax = 30;
+    this.slidePhase = "right";
 
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
@@ -37,17 +46,62 @@ class Player extends Sprite {
 
   startFlagpoleSlide(flagpole) {
     this.isSlidingPole = true;
-    this.x = flagpole.x - this.width / 2;
+    this.hasCompletedSlide = false;
+    this.slideStartY = this.y;
+    this.slideEndY = flagpole.y + flagpole.height - this.height - 32;
+    this.slideProgress = 0;
+    this.x = flagpole.x - 20; // Start on left side of pole
     this.velocityX = 0;
     this.velocityY = 0;
-    this.animation.setState("flagpoleLeft");
+    this.direction = -1; // Face left initially
+    this.slidePhase = "left";
+    this.animation.setState("flagpoleLeft"); // Start with left animation
+  }
+
+  updateFlagpoleSlide() {
+    if (!this.isSlidingPole) return;
+
+    if (this.hasCompletedSlide) {
+      this.endSlideDelay++;
+
+      // Switch to right side when reaching bottom
+      if (this.slidePhase === "left" && this.endSlideDelay >= 15) {
+        this.slidePhase = "right";
+        this.x = this.x + 20; // Move to right side of pole
+        this.direction = 1;
+        this.animation.setState("flagpoleRight");
+        this.endSlideDelay = 0;
+      }
+      // Jump off after holding right position
+      else if (
+        this.slidePhase === "right" &&
+        this.endSlideDelay >= this.endSlideDelayMax
+      ) {
+        this.endFlagpoleSlide();
+      }
+      return;
+    }
+
+    // Update slide progress
+    this.slideProgress = Math.min(1, this.slideProgress + this.slideSpeed);
+
+    // Interpolate position
+    this.y =
+      this.slideStartY +
+      (this.slideEndY - this.slideStartY) * this.slideProgress;
+
+    // Check if slide is complete
+    if (this.slideProgress >= 1 && !this.hasCompletedSlide) {
+      this.hasCompletedSlide = true;
+      this.endSlideDelay = 0;
+    }
   }
 
   endFlagpoleSlide() {
     this.isSlidingPole = false;
     this.animation.setState("flagpoleJumpOff");
-    this.velocityX = 2; // Jump right
-    this.velocityY = -4; // Small jump
+    this.velocityX = 2;
+    this.velocityY = -4;
   }
 
   die() {
@@ -60,6 +114,10 @@ class Player extends Sprite {
   }
 
   update(sprites, keys, camera) {
+    if (this.isSlidingPole) {
+      this.updateFlagpoleSlide();
+      return false;
+    }
     if (this.isDying) {
       this.velocityY += this.deathGravity;
       this.y += this.velocityY;
@@ -159,21 +217,21 @@ class Player extends Sprite {
   }
 
   respawn() {
-        this.x = this.spawnX;
-        this.y = this.spawnY;
-        this.velocityX = 0;
-        this.velocityY = 0;
-        this.isDying = false;
-        this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
-        
-        if (this.camera) {
-            this.camera.reset();
-        }
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.isDying = false;
+    this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
 
-        if (this.levelManager) {
-          this.levelManager.restartLevel();
-        }
+    if (this.camera) {
+      this.camera.reset();
     }
+
+    if (this.levelManager) {
+      this.levelManager.restartLevel();
+    }
+  }
 
   checkCollision(platform) {
     return (

@@ -67,7 +67,7 @@ class LevelManager {
       id: "1-1",
       width: 6000,
       height: 480,
-      playerSpawn: { x: 220, y: 380 },
+      playerSpawn: { x: 4700, y: 380 },
 
       // Ground segments - Now with gaps
       groundSegments: [
@@ -254,9 +254,12 @@ class LevelManager {
 
         { x: 4984, y: 192, type: "stair" },
         { x: 5016, y: 192, type: "stair" }, // Eighth row (2 blocks)
+
+        { x: 5143, y: 416, type: "stair" },
       ],
+
       levelEnd: {
-        flagpole: { x: 5080, y: 96 }, // Position flagpole after final staircase
+        flagpole: { x: 5157, y: 128 },
       },
 
       // Keeping your existing pipe placements
