@@ -73,7 +73,7 @@ class LevelManager {
   defineLevels() {
     this.levels.push({
       id: "1-1",
-      width: 6000,
+      width: 5500,
       height: 480,
       playerSpawn: { x: 4700, y: 380 },
 

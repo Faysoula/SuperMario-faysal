@@ -41,8 +41,12 @@ class Castle extends Sprite {
   draw(ctx) {
     if (!this.spriteSheet.complete) return;
 
-    // Draw castle in two parts
-    // 1. First draw the top part of the castle (above the door)
+    // Calculate the castle's vertical midpoint
+    const castleMidY = this.y + this.height / 2;
+    const player = this.findPlayer();
+    const playerBottom = player ? player.y + player.height : 0;
+
+    // Draw the top part of the castle
     ctx.drawImage(
       this.spriteSheet,
       this.castleSprite.x,
@@ -55,15 +59,13 @@ class Castle extends Sprite {
       this.height / 2
     );
 
-    // Find Mario and draw him if he's entering the castle
-    if (this.isPlayerEntering) {
-      const player = this.findPlayer();
-      if (player && player.x >= this.x && player.x < this.x + this.width) {
-        player.draw(ctx);
-      }
+    // If player exists and their bottom is above the castle's midpoint,
+    // draw them now (they'll appear behind the bottom part)
+    if (player && playerBottom <= castleMidY && this.isPlayerEntering) {
+      player.draw(ctx);
     }
 
-    // 2. Draw bottom part of castle (below the door)
+    // Draw bottom part of castle
     ctx.drawImage(
       this.spriteSheet,
       this.castleSprite.x,
@@ -75,10 +77,16 @@ class Castle extends Sprite {
       this.width,
       this.height / 2
     );
+
+    // If player exists and their bottom is below the castle's midpoint,
+    // draw them now (they'll appear in front of the bottom part)
+    if (player && playerBottom > castleMidY && this.isPlayerEntering) {
+      player.draw(ctx);
+    }
   }
 
   findPlayer() {
-        if (!this.levelManager || !this.levelManager.game) return null;
+    if (!this.levelManager || !this.levelManager.game) return null;
     const sprites = this.levelManager.game.sprites;
     return sprites.find((sprite) => sprite instanceof Player);
   }
