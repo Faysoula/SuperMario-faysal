@@ -65,7 +65,7 @@ class FlagPole extends Sprite {
   }
 
   checkCollision(player) {
-    const hitboxWidth = 24;
+    const hitboxWidth = 10;
     const poleLeft = this.x - (hitboxWidth - this.width) / 2;
 
     return (

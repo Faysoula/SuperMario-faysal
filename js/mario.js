@@ -102,6 +102,8 @@ class Player extends Sprite {
     this.animation.setState("flagpoleJumpOff");
     this.velocityX = 2;
     this.velocityY = -4;
+
+    
   }
 
   die() {

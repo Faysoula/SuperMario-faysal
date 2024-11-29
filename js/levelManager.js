@@ -59,6 +59,14 @@ class LevelManager {
         );
         this.game.addSprite(flagpole);
       }
+      if (levelData.levelEnd?.castle) {
+        const castle = new Castle(
+          levelData.levelEnd.castle.x,
+          levelData.levelEnd.castle.y
+        );
+        castle.setLevelManager(this);
+        this.game.addSprite(castle);
+      }
     }
   }
 
@@ -260,6 +268,7 @@ class LevelManager {
 
       levelEnd: {
         flagpole: { x: 5157, y: 128 },
+        castle: { x: 5267, y: 288 },
       },
 
       // Keeping your existing pipe placements
