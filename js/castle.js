@@ -11,30 +11,27 @@ class Castle extends Sprite {
     this.doorOffset = 64; // Adjusted doorOffset to match new size
     this.isPlayerEntering = false;
     this.levelManager = null;
+    this.entranceX = this.x + 64;
   }
 
   setLevelManager(levelManager) {
     this.levelManager = levelManager;
   }
 
+  startPlayerEntrance() {
+    this.isPlayerEntering = true;
+  }
+
   update(sprites) {
-    // Only handle player movement if they're entering the castle
     if (!this.isPlayerEntering) {
       return false;
     }
 
     sprites.forEach((sprite) => {
       if (sprite instanceof Player) {
-        // Once entering starts, take control of player movement
-        sprite.velocityX += 2;
-        sprite.animation.setState("walkRight");
-
-        // Check if player has reached the castle door
-        if (sprite.x > this.x + this.doorOffset) {
-          if (this.levelManager) {
-            this.levelManager.nextLevel();
-          }
-          return true;
+        if (!sprite.isSlidingPole && !sprite.isEnteringCastle) {
+          // Start castle entry sequence once pole slide is complete
+          sprite.startCastleEntry(this);
         }
       }
     });
@@ -44,20 +41,45 @@ class Castle extends Sprite {
   draw(ctx) {
     if (!this.spriteSheet.complete) return;
 
+    // Draw castle in two parts
+    // 1. First draw the top part of the castle (above the door)
     ctx.drawImage(
       this.spriteSheet,
       this.castleSprite.x,
       this.castleSprite.y,
       160,
-      160,
+      80,
       this.x,
       this.y,
       this.width,
-      this.height
+      this.height / 2
+    );
+
+    // Find Mario and draw him if he's entering the castle
+    if (this.isPlayerEntering) {
+      const player = this.findPlayer();
+      if (player && player.x >= this.x && player.x < this.x + this.width) {
+        player.draw(ctx);
+      }
+    }
+
+    // 2. Draw bottom part of castle (below the door)
+    ctx.drawImage(
+      this.spriteSheet,
+      this.castleSprite.x,
+      this.castleSprite.y + 80,
+      160,
+      80,
+      this.x,
+      this.y + this.height / 2,
+      this.width,
+      this.height / 2
     );
   }
 
-  startPlayerEntrance() {
-    this.isPlayerEntering = true;
+  findPlayer() {
+        if (!this.levelManager || !this.levelManager.game) return null;
+    const sprites = this.levelManager.game.sprites;
+    return sprites.find((sprite) => sprite instanceof Player);
   }
 }

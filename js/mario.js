@@ -34,6 +34,11 @@ class Player extends Sprite {
     this.endSlideDelay = 0;
     this.endSlideDelayMax = 30;
     this.slidePhase = "right";
+    this.isEnteringCastle = false;
+    this.entryPhase = "none"; // none, walking, entering
+    this.targetX = 0;
+    this.hasLandedAfterPole = false;
+    this.flagpoleLandingPosition = 0;
 
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
@@ -58,7 +63,7 @@ class Player extends Sprite {
     this.animation.setState("flagpoleLeft"); // Start with left animation
   }
 
-  updateFlagpoleSlide() {
+  updateFlagpoleSlide(sprites) {
     if (!this.isSlidingPole) return;
 
     if (this.hasCompletedSlide) {
@@ -77,7 +82,7 @@ class Player extends Sprite {
         this.slidePhase === "right" &&
         this.endSlideDelay >= this.endSlideDelayMax
       ) {
-        this.endFlagpoleSlide();
+        this.endFlagpoleSlide(sprites);
       }
       return;
     }
@@ -97,13 +102,42 @@ class Player extends Sprite {
     }
   }
 
-  endFlagpoleSlide() {
+  endFlagpoleSlide(sprites) {
     this.isSlidingPole = false;
-    this.animation.setState("flagpoleJumpOff");
+    this.animation.setState("walkRight");
     this.velocityX = 2;
     this.velocityY = -4;
+    this.hasLandedAfterPole = false;
 
-    
+    this.flagpoleLandingPosition = this.x + 30;
+  }
+
+  startCastleEntry(castle) {
+    this.isEnteringCastle = true;
+    this.entryPhase = "walking";
+    this.targetX = castle.entranceX;
+    this.direction = 1; // Face right
+    this.velocityX = 2; // Set walking speed
+    this.animation.setState("walkRight");
+  }
+
+  updateCastleEntry() {
+    if (!this.isEnteringCastle) return;
+
+    switch (this.entryPhase) {
+      case "walking":
+        if (this.x >= this.targetX) {
+          this.entryPhase = "entering";
+          this.velocityX = 1;
+        }
+        break;
+
+      case "entering":
+        if (this.levelManager) {
+          this.levelManager.nextLevel();
+        }
+        break;
+    }
   }
 
   die() {
@@ -117,7 +151,47 @@ class Player extends Sprite {
 
   update(sprites, keys, camera) {
     if (this.isSlidingPole) {
-      this.updateFlagpoleSlide();
+      this.updateFlagpoleSlide(sprites);
+      return false;
+    }
+
+    // Handle post-flagpole landing sequence
+    if (
+      !this.hasLandedAfterPole &&
+      !this.isSlidingPole &&
+      this.flagpoleLandingPosition > 0
+    ) {
+      // Apply normal physics
+      this.velocityY += this.gravity;
+      this.x += this.velocityX;
+      this.y += this.velocityY;
+
+      // Check for ground collision
+      sprites.forEach((sprite) => {
+        if (sprite instanceof Platform && this.checkCollision(sprite)) {
+          this.resolveCollision(sprite);
+          if (this.isGrounded) {
+            this.hasLandedAfterPole = true;
+            this.velocityX = 0;
+            // Now find the castle and start entry
+            sprites.forEach((s) => {
+              if (s instanceof Castle) {
+                s.startPlayerEntrance();
+              }
+            });
+          }
+        }
+      });
+
+      this.animation.update();
+      return false;
+    }
+
+    if (this.isEnteringCastle) {
+      this.updateCastleEntry();
+      this.x += this.velocityX;
+      this.y += this.velocityY;
+      this.animation.update();
       return false;
     }
     if (this.isDying) {
@@ -275,6 +349,11 @@ class Player extends Sprite {
   }
 
   draw(ctx) {
+    if (this.isEnteringCastle && this.entryPhase === "entering" && this.x >= this.targetX) {
+      return;
+    }
+
+    // Draw Mario normally
     this.animation.draw(ctx, this.x, this.y, this.width, this.height);
   }
 }
