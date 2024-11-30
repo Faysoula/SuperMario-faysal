@@ -1,9 +1,10 @@
 class Block extends Sprite {
-  constructor(x, y, type = "brick") {
+  constructor(x, y, type = "brick", content) {
     super();
     this.x = x;
     this.y = y;
     this.type = type;
+    this.content = content;
 
     // Set size based on block type
     if (this.type === "stair") {
@@ -196,16 +197,15 @@ class Block extends Sprite {
     if (this.type === "question") {
       this.hit = true;
 
-      // Create coin at the top of the block
-      const coin = new Coin(
-        this.x + (this.width - 24) / 2, // Center coin horizontally
-        this.y, // Start at block's top
-        true // This is a pop-out coin
-      );
-      sprites.push(coin);
-    }
-    // Add animation for brick blocks too
-    else if (this.type === "brick") {
+      if (this.content === "mushroom") {
+        const mushroom = new Mushroom(this.x, this.y - this.height);
+        sprites.push(mushroom);
+      } else {
+        // Default behavior: spawn coin
+        const coin = new Coin(this.x + (this.width - 24) / 2, this.y, true);
+        sprites.push(coin);
+      }
+    } else if (this.type === "brick") {
       this.hitAnimation = 1;
     }
   }

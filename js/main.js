@@ -10,4 +10,4 @@ levelManager.createLevelSelector();
 setInterval(() => {
   game.update();
   game.draw();
-}, 1000/100);
+}, 1000/60);

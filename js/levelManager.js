@@ -37,7 +37,7 @@ class LevelManager {
       });
 
       levelData.blocks.forEach((block) => {
-        const newBlock = new Block(block.x, block.y, block.type);
+        const newBlock = new Block(block.x, block.y, block.type, block.content);
         this.game.addSprite(newBlock);
       });
 
@@ -75,7 +75,7 @@ class LevelManager {
       id: "1-1",
       width: 5500,
       height: 480,
-      playerSpawn: { x: 4700, y: 380 },
+      playerSpawn: { x: 156, y: 380 },
 
       // Ground segments - Now with gaps
       groundSegments: [
@@ -87,10 +87,9 @@ class LevelManager {
 
       // Block placements - includes both first screen and new section
       blocks: [
-        // Previous blocks remain unchanged
         { x: 256, y: 272, type: "question" },
         { x: 320, y: 272, type: "brick" },
-        { x: 350, y: 272, type: "question" },
+        { x: 350, y: 272, type: "question", content: "mushroom" },
         { x: 380, y: 272, type: "brick" },
         { x: 410, y: 272, type: "question" },
         { x: 440, y: 272, type: "brick" },

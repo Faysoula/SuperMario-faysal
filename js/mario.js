@@ -40,6 +40,16 @@ class Player extends Sprite {
     this.hasLandedAfterPole = false;
     this.flagpoleLandingPosition = 0;
 
+    // Power-up related properties
+    this.isSuper = false;
+    this.isTransforming = false;
+    this.transformationTimer = 0;
+    this.transformationDuration = 60;
+    this.transformationFlashInterval = 4;
+    this.smallHeight = 30;
+    this.superHeight = 54;
+    this.isVisible = true;
+
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
@@ -141,6 +151,13 @@ class Player extends Sprite {
   }
 
   die() {
+    if (this.isSuper) {
+      // If Super Mario, revert to small instead of dying
+      this.revertToSmall();
+      this.velocityY = -8; // Small bounce when hit
+      return;
+    }
+
     if (!this.isDying) {
       this.isDying = true;
       this.velocityY = this.deathJumpVelocity;
@@ -150,6 +167,10 @@ class Player extends Sprite {
   }
 
   update(sprites, keys, camera) {
+    this.handleTransformation();
+    if (this.isTransforming) {
+      return false; // Prevent other updates during transformation
+    }
     if (this.isSlidingPole) {
       this.updateFlagpoleSlide(sprites);
       return false;
@@ -349,11 +370,64 @@ class Player extends Sprite {
   }
 
   draw(ctx) {
-    if (this.isEnteringCastle && this.entryPhase === "entering" && this.x >= this.targetX) {
+    if (
+      this.isEnteringCastle &&
+      this.entryPhase === "entering" &&
+      this.x >= this.targetX
+    ) {
+      return;
+    }
+
+    if (this.isTransforming && !this.isVisible) {
       return;
     }
 
     // Draw Mario normally
     this.animation.draw(ctx, this.x, this.y, this.width, this.height);
+  }
+  //super mario transformation
+  transformToSuper() {
+    if (!this.isSuper && !this.isTransforming) {
+      this.isTransforming = true;
+      this.transformationTimer = 0;
+      const heightDifference = this.superHeight - this.smallHeight;
+      this.y -= heightDifference; // Adjust position to grow upward
+    }
+  }
+
+  revertToSmall() {
+    if (this.isSuper) {
+      this.isSuper = false;
+      this.height = this.smallHeight;
+      this.y += this.superHeight - this.smallHeight; // Adjust position when shrinking
+      this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
+    }
+  }
+
+  handleTransformation() {
+    if (this.isTransforming) {
+      this.transformationTimer++;
+
+      // Toggle visibility every few frames for flashing effect
+      if (this.transformationTimer % this.transformationFlashInterval === 0) {
+        this.isVisible = !this.isVisible;
+      }
+
+      // Gradually increase height during transformation
+      const progress = this.transformationTimer / this.transformationDuration;
+      this.height =
+        this.smallHeight + (this.superHeight - this.smallHeight) * progress;
+
+      // Complete transformation
+      if (this.transformationTimer >= this.transformationDuration) {
+        this.isTransforming = false;
+        this.isSuper = true;
+        this.height = this.superHeight;
+        this.isVisible = true;
+        // Switch to super Mario animation states
+        this.animation = new SpriteAnimation(this.spriteSheet, 19, 32);
+        this.animation.states = this.animation.superStates;
+      }
+    }
   }
 }

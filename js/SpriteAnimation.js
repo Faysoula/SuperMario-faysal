@@ -66,6 +66,59 @@ class SpriteAnimation {
         loop: false,
       },
     };
+    // Super Mario states
+    this.superStates = {
+      idleRight: {
+        frames: [{ x: 209, y: 52 }],
+        loop: false,
+      },
+      idleLeft: {
+        frames: [{ x: 180, y: 52 }],
+        loop: false,
+      },
+      walkRight: {
+        frames: [
+          { x: 239, y: 52 },
+          { x: 299, y: 53 },
+          { x: 270, y: 52 },
+        ],
+        loop: true,
+        frameDelay: 8,
+      },
+      walkLeft: {
+        frames: [
+          { x: 150, y: 52 },
+          { x: 90, y: 53 },
+          { x: 121, y: 52 },
+        ],
+        loop: true,
+        frameDelay: 8,
+      },
+      jumpRight: {
+        frames: [{ x: 359, y: 52 }],
+        loop: false,
+      },
+      jumpLeft: {
+        frames: [{ x: 30, y: 52 }],
+        loop: false,
+      },
+      crouchRight: {
+        frames: [{ x: 389, y: 57 }],
+        loop: false,
+      },
+      crouchLeft: {
+        frames: [{ x: 0, y: 57 }],
+        loop: false,
+      },
+      turnRight: {
+        frames: [{ x: 60, y: 52 }],
+        loop: false,
+      },
+      turnLeft: {
+        frames: [{ x: 329, y: 52 }],
+        loop: false,
+      },
+    };
 
     this.currentState = "idleRight";
   }
