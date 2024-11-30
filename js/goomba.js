@@ -28,7 +28,6 @@ class Goomba extends Sprite {
     ];
   }
 
-  // In goomba.js, modify the update method
   update(sprites, keys) {
     if (this.isDead) {
       this.deathTimer++;
@@ -51,7 +50,6 @@ class Goomba extends Sprite {
             this.y < sprite.y + sprite.height &&
             this.y + this.height > sprite.y
           ) {
-            // Reverse direction if would collide
             this.velocityX *= -1;
             canMove = false;
           }
@@ -75,9 +73,10 @@ class Goomba extends Sprite {
         if (this.checkCollision(sprite)) {
           this.resolveCollision(sprite);
         }
-      } else if (sprite instanceof Player && !this.isDead) {
+      } else if (sprite instanceof Player && !this.isDead && !sprite.isDying) {
+        // Add isDying check here
         if (this.checkCollision(sprite)) {
-          if (!sprite.isDying) {
+          if (!sprite.damageState.isInvincible) {
             const hitFromAbove =
               sprite.y + sprite.height < this.y + this.height / 2 &&
               sprite.velocityY > 0;
@@ -85,9 +84,8 @@ class Goomba extends Sprite {
             if (hitFromAbove) {
               this.die();
               sprite.velocityY = -8;
-            } else if (!this.isDead) {
-              // Only kill player if Goomba is alive
-              sprite.die();
+            } else {
+              sprite.takeDamage();
             }
           }
         }
@@ -102,7 +100,6 @@ class Goomba extends Sprite {
 
     return false;
   }
-
   die() {
     this.isDead = true;
     this.frameIndex = 2;

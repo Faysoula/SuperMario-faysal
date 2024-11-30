@@ -50,9 +50,94 @@ class Player extends Sprite {
     this.superHeight = 54;
     this.isVisible = true;
 
+    this.damageState = {
+      isInvincible: false,
+      invincibilityTimer: 0,
+      invincibilityDuration: 90, // 1.5 seconds at 60fps
+      flashInterval: 4, // How often to toggle visibility
+      isVisible: true,
+      isDamaged: false,
+      damageAnimationTimer: 0,
+      damageAnimationDuration: 30, // 0.5 seconds for shrinking animation
+    };
+
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
+  }
+  takeDamage() {
+    if (this.isSuper && !this.damageState.isInvincible && !this.isDying) {
+      // Start damage sequence
+      this.damageState.isDamaged = true;
+      this.damageState.isInvincible = true;
+      this.damageState.invincibilityTimer = 0;
+      this.damageState.damageAnimationTimer = 0;
+
+      // Small bounce when hit
+      this.velocityY = -4;
+
+      return true;
+    } else if (
+      !this.isSuper &&
+      !this.damageState.isInvincible &&
+      !this.isDying
+    ) {
+      this.die();
+      return true;
+    }
+    return false;
+  }
+
+  updateDamageState() {
+    if (this.damageState.isInvincible) {
+      this.damageState.invincibilityTimer++;
+
+      // Handle visibility flashing
+      if (
+        this.damageState.invincibilityTimer % this.damageState.flashInterval ===
+        0
+      ) {
+        this.damageState.isVisible = !this.damageState.isVisible;
+      }
+
+      // Handle damage animation (shrinking)
+      if (this.damageState.isDamaged) {
+        this.damageState.damageAnimationTimer++;
+
+        if (this.damageState.damageAnimationTimer === 1) {
+          // At the start of damage animation
+          this.height = this.superHeight;
+          this.y -= this.superHeight - this.smallHeight;
+        }
+
+        const progress =
+          this.damageState.damageAnimationTimer /
+          this.damageState.damageAnimationDuration;
+        if (progress <= 1) {
+          this.height =
+            this.superHeight + (this.smallHeight - this.superHeight) * progress;
+        }
+
+        if (
+          this.damageState.damageAnimationTimer >=
+          this.damageState.damageAnimationDuration
+        ) {
+          this.height = this.smallHeight;
+          this.isSuper = false;
+          this.damageState.isDamaged = false;
+          this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
+        }
+      }
+
+      if (
+        this.damageState.invincibilityTimer >=
+        this.damageState.invincibilityDuration
+      ) {
+        this.damageState.isInvincible = false;
+        this.damageState.isVisible = true;
+        this.damageState.invincibilityTimer = 0;
+      }
+    }
   }
 
   setLevelManager(levelManager) {
@@ -167,7 +252,39 @@ class Player extends Sprite {
   }
 
   update(sprites, keys, camera) {
+    this.updateDamageState();
+
+    if (this.isDying) {
+      this.velocityY += this.deathGravity;
+      this.y += this.velocityY;
+
+      if (this.y > 800) {
+        this.respawn(camera);
+      }
+      return false;
+    }
     this.handleTransformation();
+    sprites.forEach((sprite) => {
+      if (sprite instanceof Goomba && !sprite.isDead) {
+        if (this.checkCollision(sprite)) {
+          if (this.damageState.isInvincible) {
+            // During invincibility, ignore enemy collision
+            return;
+          }
+
+          const hitFromAbove =
+            this.y + this.height < sprite.y + sprite.height / 2 &&
+            this.velocityY > 0;
+
+          if (hitFromAbove) {
+            sprite.die();
+            this.velocityY = -8;
+          } else {
+            this.takeDamage();
+          }
+        }
+      }
+    });
     if (this.isTransforming) {
       return false; // Prevent other updates during transformation
     }
@@ -377,6 +494,9 @@ class Player extends Sprite {
     ) {
       return;
     }
+    if (!this.damageState.isVisible) {
+      return;
+    }
 
     if (this.isTransforming && !this.isVisible) {
       return;
@@ -386,6 +506,7 @@ class Player extends Sprite {
     this.animation.draw(ctx, this.x, this.y, this.width, this.height);
   }
   //super mario transformation
+
   transformToSuper() {
     if (!this.isSuper && !this.isTransforming) {
       this.isTransforming = true;
