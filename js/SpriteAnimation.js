@@ -103,11 +103,11 @@ class SpriteAnimation {
         loop: false,
       },
       crouchRight: {
-        frames: [{ x: 389, y: 57 }],
+        frames: [{ x: 389, y: 47 }],
         loop: false,
       },
       crouchLeft: {
-        frames: [{ x: 0, y: 57 }],
+        frames: [{ x: 0, y: 47 }],
         loop: false,
       },
       turnRight: {
@@ -116,6 +116,14 @@ class SpriteAnimation {
       },
       turnLeft: {
         frames: [{ x: 329, y: 52 }],
+        loop: false,
+      },
+      flagpoleLeft: {
+        frames: [{ x: 363, y: 89 }],
+        loop: false,
+      },
+      flagpoleRight: {
+        frames: [{ x: 28, y: 89 }],
         loop: false,
       },
     };

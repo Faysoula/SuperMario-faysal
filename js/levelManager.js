@@ -95,7 +95,7 @@ class LevelManager {
         { x: 440, y: 272, type: "brick" },
         { x: 380, y: 144, type: "question" },
         { x: 1835, y: 320, type: "brick" },
-        { x: 1865, y: 320, type: "question" },
+        { x: 1865, y: 320, type: "question", content: "mushroom" },
         { x: 1895, y: 320, type: "brick" },
         { x: 1925, y: 320, type: "brick" },
         { x: 1955, y: 220, type: "brick" },
@@ -126,7 +126,7 @@ class LevelManager {
         { x: 2834, y: 320, type: "question" }, // +66px
 
         // Question block above middle question block
-        { x: 2768, y: 224, type: "question" }, // 96px above middle block
+        { x: 2768, y: 224, type: "question", content: "mushroom" }, // 96px above middle block
         // Single brick block 159px to the right of last question block
         { x: 2993, y: 320, type: "brick" },
 

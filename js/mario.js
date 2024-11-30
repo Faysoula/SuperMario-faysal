@@ -47,7 +47,7 @@ class Player extends Sprite {
     this.transformationDuration = 60;
     this.transformationFlashInterval = 4;
     this.smallHeight = 30;
-    this.superHeight = 54;
+    this.superHeight = 60;
     this.isVisible = true;
 
     this.damageState = {
@@ -60,6 +60,10 @@ class Player extends Sprite {
       damageAnimationTimer: 0,
       damageAnimationDuration: 30, // 0.5 seconds for shrinking animation
     };
+
+    this.normalHeight = 60;
+    this.crouchHeight = 40; 
+    this.heightDifference = this.normalHeight - this.crouchHeight;
 
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
@@ -155,7 +159,12 @@ class Player extends Sprite {
     this.velocityY = 0;
     this.direction = -1; // Face left initially
     this.slidePhase = "left";
-    this.animation.setState("flagpoleLeft"); // Start with left animation
+    if (this.isSuper) {
+      this.animation.setState("flagpoleLeft");// uses the this
+    }else {
+      this.animation.setState("flagpoleLeft");
+    }
+    // Start with left animation
   }
 
   updateFlagpoleSlide(sprites) {
@@ -169,7 +178,11 @@ class Player extends Sprite {
         this.slidePhase = "right";
         this.x = this.x + 20; // Move to right side of pole
         this.direction = 1;
-        this.animation.setState("flagpoleRight");
+        if (this.isSuper) {
+          this.animation.setState("flagpoleRight");
+        } else {
+          this.animation.setState("flagpoleRight");
+        }
         this.endSlideDelay = 0;
       }
       // Jump off after holding right position
@@ -199,7 +212,11 @@ class Player extends Sprite {
 
   endFlagpoleSlide(sprites) {
     this.isSlidingPole = false;
-    this.animation.setState("walkRight");
+    if (this.isSuper) {
+      this.animation.setState("walkRight");
+    } else {
+      this.animation.setState("walkRight");
+    }
     this.velocityX = 2;
     this.velocityY = -4;
     this.hasLandedAfterPole = false;
@@ -213,7 +230,11 @@ class Player extends Sprite {
     this.targetX = castle.entranceX;
     this.direction = 1; // Face right
     this.velocityX = 2; // Set walking speed
-    this.animation.setState("walkRight");
+    if (this.isSuper) {
+      this.animation.setState("walkRight");
+    } else {
+      this.animation.setState("walkRight");
+    }
   }
 
   updateCastleEntry() {
@@ -356,6 +377,41 @@ class Player extends Sprite {
       this.groundSpeed = this.velocityX;
     }
 
+    if (this.isSuper && this.isGrounded && !this.isSlidingPole) {
+      if (keys["ArrowDown"] || keys["S"]) {
+        if (!this.isCrouching) {
+          this.isCrouching = true;
+          this.height = this.crouchHeight;
+          this.y += this.heightDifference ;
+          this.animation.setState(
+            this.direction === 1 ? "crouchRight" : "crouchLeft"
+          );
+          this.velocityX = 0; // Stop horizontal movement while crouching
+        }
+      } else if (this.isCrouching) {
+        // Check if there's space to stand up
+        const standingCollision = sprites.some(
+          (sprite) =>
+            sprite instanceof Platform &&
+            this.checkCollisionAtHeight(sprite, this.normalHeight)
+        );
+
+        if (!standingCollision) {
+          this.isCrouching = false;
+          this.y -= this.heightDifference;
+          this.height = this.normalHeight;
+          this.animation.setState(
+            this.direction === 1 ? "idleRight" : "idleLeft"
+          );
+        }
+      }
+    }
+
+    // Prevent movement while crouching
+    if (this.isCrouching) {
+      return false;
+    }
+
     if ((keys["ArrowUp"] || keys["W"] || keys[" "]) && this.isGrounded) {
       this.velocityY = this.jumpForce;
       this.isGrounded = false;
@@ -428,6 +484,21 @@ class Player extends Sprite {
 
     this.animation.update();
     return false;
+  }
+
+  // Helper method to check if there would be a collision at a different height
+  checkCollisionAtHeight(platform, testHeight) {
+    const originalHeight = this.height;
+    const originalY = this.y;
+    this.height = testHeight;
+    this.y -= testHeight - originalHeight;
+
+    const collision = this.checkCollision(platform);
+
+    this.height = originalHeight;
+    this.y = originalY;
+
+    return collision;
   }
 
   respawn() {
