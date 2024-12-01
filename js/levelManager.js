@@ -85,7 +85,7 @@ class LevelManager {
       id: "1-1",
       width: 5945, // Increased by 255 to account for the shift
       height: 480,
-      playerSpawn: { x: 300, y: 380 }, // Changed from 156 to 81
+      playerSpawn: { x: 81, y: 380 }, // Changed from 156 to 81
 
       // Ground segments - Shifted by 255 pixels
       groundSegments: [

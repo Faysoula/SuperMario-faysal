@@ -40,6 +40,7 @@ class Player extends Sprite {
     this.hasLandedAfterPole = false;
     this.flagpoleLandingPosition = 0;
 
+
     // Power-up related properties
     this.isSuper = false;
     this.isTransforming = false;
@@ -468,7 +469,11 @@ class Player extends Sprite {
     this.x += this.velocityX;
     this.y += this.velocityY;
 
-    if (this.x < 0) this.x = 0;
+    const screenX = this.x - this.camera.x;
+    if (screenX < 0) {
+      this.x = this.camera.x;
+      this.velocityX = 0;
+    }
     if (this.y > 600 && !this.isDying) this.respawn();
 
     this.wasGrounded = this.isGrounded;
