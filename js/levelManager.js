@@ -20,6 +20,16 @@ class LevelManager {
       background.setGame(this.game);
       this.game.addSprite(background);
 
+      const player = new Player(
+        levelData.playerSpawn.x,
+        levelData.playerSpawn.y,
+        this.game.camera
+      );
+      player.setLevelManager(this);
+      player.spawnX = levelData.playerSpawn.x;
+      player.spawnY = levelData.playerSpawn.y;
+      this.game.addSprite(player);
+
       // Then load all other game elements in order
       levelData.groundSegments.forEach((segment) => {
         const ground = new Platform(
@@ -66,15 +76,7 @@ class LevelManager {
       }
 
       // Add player last so it's drawn on top
-      const player = new Player(
-        levelData.playerSpawn.x,
-        levelData.playerSpawn.y,
-        this.game.camera
-      );
-      player.setLevelManager(this);
-      player.spawnX = levelData.playerSpawn.x;
-      player.spawnY = levelData.playerSpawn.y;
-      this.game.addSprite(player);
+      
     }
   }
 
