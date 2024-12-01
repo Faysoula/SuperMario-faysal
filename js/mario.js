@@ -469,10 +469,13 @@ class Player extends Sprite {
     this.x += this.velocityX;
     this.y += this.velocityY;
 
-    const screenX = this.x - this.camera.x;
-    if (screenX < 0) {
-      this.x = this.camera.x;
-      this.velocityX = 0;
+    if (this.x - this.camera.x < 10) {
+      // Only check when close to left edge
+      const screenX = this.x - this.camera.x;
+      if (screenX < 0) {
+        this.x = this.camera.x;
+        this.velocityX = 0;
+      }
     }
     if (this.y > 600 && !this.isDying) this.respawn();
 

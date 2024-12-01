@@ -18,7 +18,6 @@ class Background extends Sprite {
       bush2: { x: 664, y: 161, width: 64, height: 90 },
     };
 
-    // Single pattern definition
     this.pattern = [
       { type: "bigHill", x: 20, y: 378 },
       { type: "bush3", x: 380, y: 417 },
@@ -30,25 +29,12 @@ class Background extends Sprite {
       { type: "bush2", x: 1327, y: 417 },
     ];
 
-    this.groundSegments = [
-      { start: 0, end: 2048 },
-      { start: 2118, end: 2118 + 477 },
-      { start: 2694, end: 2694 + 1700 },
-      { start: 4486, end: 4486 + 2000 },
-    ];
-
-    this.patternWidth = 1500; // Adjusted pattern width
-    this.lastDrawnBushPositions = new Map();
-  }
-
-  isPositionOverGround(x) {
-    return this.groundSegments.some(
-      (segment) => x >= segment.start && x <= segment.end
-    );
+    this.patternWidth = 1500;
   }
 
   isCollidingWithCastle(x, y, width, height) {
     if (!this.game) return false;
+
     return this.game.sprites.some((sprite) => {
       if (sprite instanceof Castle) {
         const castleBox = {
@@ -70,6 +56,7 @@ class Background extends Sprite {
 
   isCollidingWithBlocks(x, y, width, height) {
     if (!this.game) return false;
+
     return this.game.sprites.some((sprite) => {
       if (sprite instanceof Block) {
         return (
@@ -83,29 +70,42 @@ class Background extends Sprite {
     });
   }
 
-  isTooCloseToLastBush(type, x) {
-    const lastPos = this.lastDrawnBushPositions.get(type);
-    if (!lastPos) return false;
-    const minDistance = type === "bush3" ? 200 : 150;
-    return Math.abs(x - lastPos) < minDistance;
+  isInView(x, y) {
+    const camera = this.game?.camera;
+    if (!camera) return true;
+    const buffer = 100;
+    return x >= camera.x - buffer && x <= camera.x + camera.width + buffer;
   }
 
   draw(ctx) {
     if (!this.spriteSheet.complete) return;
-    this.lastDrawnBushPositions.clear();
 
-    const totalPatterns = Math.ceil(this.width / this.patternWidth);
+    const camera = this.game?.camera;
+    if (!camera) return;
 
-    for (let i = 0; i < totalPatterns; i++) {
-      const patternOffset = i * this.patternWidth;
+    const viewStart =
+      Math.max(0, Math.floor((camera.x - 100) / this.patternWidth)) *
+      this.patternWidth;
+    const viewEnd = Math.min(
+      this.width,
+      Math.ceil((camera.x + camera.width + 100) / this.patternWidth) *
+        this.patternWidth
+    );
 
+    for (
+      let patternX = viewStart;
+      patternX < viewEnd;
+      patternX += this.patternWidth
+    ) {
       this.pattern.forEach((element) => {
-        const absoluteX = this.x + element.x + patternOffset;
+        const absoluteX = this.x + element.x + patternX;
+
+        if (!this.isInView(absoluteX, element.y)) return;
+
         const sprite = this.sprites[element.type];
         const elementWidth = sprite.width * 2;
         const elementHeight = sprite.height * 2;
 
-        // Skip if element would overlap with castle
         if (
           this.isCollidingWithCastle(
             absoluteX,
@@ -113,11 +113,8 @@ class Background extends Sprite {
             elementWidth,
             elementHeight
           )
-        ) {
+        )
           return;
-        }
-
-        // Skip if element would overlap with blocks
         if (
           this.isCollidingWithBlocks(
             absoluteX,
@@ -125,26 +122,9 @@ class Background extends Sprite {
             elementWidth,
             elementHeight
           )
-        ) {
+        )
           return;
-        }
 
-        // Ground-based elements check
-        if (element.y > 300) {
-          if (!this.isPositionOverGround(absoluteX)) {
-            return;
-          }
-
-          // Bush spacing check
-          if (element.type.includes("bush")) {
-            if (this.isTooCloseToLastBush(element.type, absoluteX)) {
-              return;
-            }
-            this.lastDrawnBushPositions.set(element.type, absoluteX);
-          }
-        }
-
-        // Draw the element
         ctx.drawImage(
           this.spriteSheet,
           sprite.x,
