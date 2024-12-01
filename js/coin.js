@@ -49,6 +49,8 @@ class Coin extends Sprite {
       this.frameIndex = (this.frameIndex + 1) % this.frames.length;
     }
 
+    const hud = sprites.find((sprite) => sprite instanceof HUD);
+
     // Handle collection for static coins
     if (!this.isPopOut) {
       sprites.forEach((sprite) => {
@@ -78,6 +80,9 @@ class Coin extends Sprite {
           this.y += this.velocityY;
           if (this.y >= this.startY) {
             this.state = "removing";
+            if(hud){
+              hud.addCoin();
+            }
           }
           break;
       }

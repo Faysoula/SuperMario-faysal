@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Faysal is falling asleep</title>
     <style>
-        
-        body {
-            margin: 0;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-        canvas {
-            image-rendering: pixelated;
-            width: 800;
-            height: 480px;
-            background: #9494ff;
-        }
+      @font-face {
+        font-family: "PressStart2P";
+        src: url("../fonts/pressstart2p-webfont.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        margin: 0;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+      canvas {
+        image-rendering: pixelated;
+        width: 800;
+        height: 480px;
+        background: #9494ff;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <canvas id="canvas" width="800" height="480"></canvas>
     <script src="game.js"></script>
+    <script src="hud.js"></script>
     <script src="castle.js"></script>
     <script src="background.js"></script>
     <script src="camera.js"></script>
@@ -39,5 +46,5 @@
     <script src="SpriteAnimation.js"></script>
     <script src="levelManager.js"></script>
     <script src="main.js"></script>
-</body>
+  </body>
 </html>

@@ -7,4 +7,7 @@ levelManager.loadLevel(0);
 
 levelManager.createLevelSelector();
 
-game.animate();
+setInterval(() => {
+    game.update();
+    game.draw();
+    }, 1000/60);

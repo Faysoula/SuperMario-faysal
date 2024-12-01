@@ -4,6 +4,7 @@ class LevelManager {
     this.currentLevel = 0;
     this.levels = [];
     this.levelState = "PLAYING"; // PLAYING, COMPLETED, FAILED
+    this.hud = new HUD();
   }
 
   loadLevel(levelIndex) {
@@ -15,7 +16,8 @@ class LevelManager {
       this.game.setLevelBoundaries(levelData.width, levelData.height);
       this.game.camera.reset();
 
-      // Load background first
+      this.game.addSprite(this.hud);
+      
       const background = new Background(0, 0);
       background.setGame(this.game);
       this.game.addSprite(background);
@@ -74,8 +76,6 @@ class LevelManager {
         castle.setLevelManager(this);
         this.game.addSprite(castle);
       }
-
-      // Add player last so it's drawn on top
       
     }
   }

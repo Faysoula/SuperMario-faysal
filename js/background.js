@@ -73,7 +73,7 @@ class Background extends Sprite {
   isInView(x, y) {
     const camera = this.game?.camera;
     if (!camera) return true;
-    const buffer = 100;
+    const buffer = 200;
     return x >= camera.x - buffer && x <= camera.x + camera.width + buffer;
   }
 
