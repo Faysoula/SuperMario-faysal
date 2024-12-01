@@ -15,17 +15,12 @@ class LevelManager {
       this.game.setLevelBoundaries(levelData.width, levelData.height);
       this.game.camera.reset();
 
-      const player = new Player(
-        levelData.playerSpawn.x,
-        levelData.playerSpawn.y,
-        this.game.camera
-      );
+      // Load background first
+      const background = new Background(0, 0);
+      background.setGame(this.game);
+      this.game.addSprite(background);
 
-      player.setLevelManager(this);
-      player.spawnX = levelData.playerSpawn.x;
-      player.spawnY = levelData.playerSpawn.y;
-      this.game.addSprite(player);
-
+      // Then load all other game elements in order
       levelData.groundSegments.forEach((segment) => {
         const ground = new Platform(
           segment.x,
@@ -41,6 +36,11 @@ class LevelManager {
         this.game.addSprite(newBlock);
       });
 
+      levelData.pipes.forEach((pipe) => {
+        const newPipe = new Pipe(pipe.x, pipe.y, pipe.size);
+        this.game.addSprite(newPipe);
+      });
+
       levelData.enemies.forEach((enemy) => {
         if (enemy.type === "goomba") {
           const goomba = new Goomba(enemy.x, enemy.y);
@@ -48,10 +48,6 @@ class LevelManager {
         }
       });
 
-      levelData.pipes.forEach((pipe) => {
-        const newPipe = new Pipe(pipe.x, pipe.y, pipe.size);
-        this.game.addSprite(newPipe);
-      });
       if (levelData.levelEnd?.flagpole) {
         const flagpole = new FlagPole(
           levelData.levelEnd.flagpole.x,
@@ -59,6 +55,7 @@ class LevelManager {
         );
         this.game.addSprite(flagpole);
       }
+
       if (levelData.levelEnd?.castle) {
         const castle = new Castle(
           levelData.levelEnd.castle.x,
@@ -67,225 +64,214 @@ class LevelManager {
         castle.setLevelManager(this);
         this.game.addSprite(castle);
       }
+
+      // Add player last so it's drawn on top
+      const player = new Player(
+        levelData.playerSpawn.x,
+        levelData.playerSpawn.y,
+        this.game.camera
+      );
+      player.setLevelManager(this);
+      player.spawnX = levelData.playerSpawn.x;
+      player.spawnY = levelData.playerSpawn.y;
+      this.game.addSprite(player);
     }
   }
 
   defineLevels() {
     this.levels.push({
       id: "1-1",
-      width: 5500,
+      width: 5945, // Increased by 255 to account for the shift
       height: 480,
-      playerSpawn: { x: 156, y: 380 },
+      playerSpawn: { x: 300, y: 380 }, // Changed from 156 to 81
 
-      // Ground segments - Now with gaps
+      // Ground segments - Shifted by 255 pixels
       groundSegments: [
-        { x: 0, width: 1584, height: 32 }, // First section up to first gap (1262 + 322)
-        { x: 1654, width: 477, height: 32 }, // Ground after first 2-block gap
-        { x: 2230, width: 1700, height: 32 },
-        { x: 4022, width: 2000, height: 32 },
+        { x: 0, width: 2048, height: 32 }, // First ground section until first gap
+        { x: 2118, width: 477, height: 32 }, // Ground after first gap
+        { x: 2694, width: 1700, height: 32 }, // Middle section
+        { x: 4486, width: 2000, height: 32 },
       ],
 
-      // Block placements - includes both first screen and new section
+      // Block placements - All x values increased by 255
       blocks: [
-        { x: 256, y: 272, type: "question" },
-        { x: 320, y: 272, type: "brick" },
-        { x: 350, y: 272, type: "question", content: "mushroom" },
-        { x: 380, y: 272, type: "brick" },
-        { x: 410, y: 272, type: "question" },
-        { x: 440, y: 272, type: "brick" },
-        { x: 380, y: 144, type: "question" },
-        { x: 1835, y: 320, type: "brick" },
-        { x: 1865, y: 320, type: "question", content: "mushroom" },
-        { x: 1895, y: 320, type: "brick" },
-        { x: 1925, y: 320, type: "brick" },
-        { x: 1955, y: 220, type: "brick" },
-        { x: 1985, y: 220, type: "brick" },
-        { x: 2015, y: 220, type: "brick" },
-        { x: 2045, y: 220, type: "brick" },
-        { x: 2075, y: 220, type: "brick" },
-        { x: 2105, y: 220, type: "brick" },
-        { x: 2135, y: 220, type: "brick" },
+        { x: 511, y: 272, type: "question" }, // 256 + 255
+        { x: 575, y: 272, type: "brick" }, // 320 + 255
+        { x: 605, y: 272, type: "question", content: "mushroom" }, // 350 + 255
+        { x: 635, y: 272, type: "brick" }, // 380 + 255
+        { x: 665, y: 272, type: "question" }, // 410 + 255
+        { x: 695, y: 272, type: "brick" }, // 440 + 255
+        { x: 635, y: 144, type: "question" }, // 380 + 255
+        //after first gap
+        { x: 2280, y: 320, type: "brick" }, // 2090 + 190
+        { x: 2310, y: 320, type: "question", content: "mushroom" }, // 2120 + 190
+        { x: 2340, y: 320, type: "brick" }, // 2150 + 190
+        { x: 2370, y: 320, type: "brick" }, // 2180 + 190
+        { x: 2400, y: 220, type: "brick" }, // 2210 + 190
+        { x: 2430, y: 220, type: "brick" }, // 2240 + 190
+        { x: 2460, y: 220, type: "brick" }, // 2270 + 190
+        { x: 2490, y: 220, type: "brick" }, // 2300 + 190
+        { x: 2520, y: 220, type: "brick" }, // 2330 + 190
+        { x: 2550, y: 220, type: "brick" }, // 2360 + 190
+        { x: 2580, y: 220, type: "brick" }, // 2390 + 190
 
-        // New section (65px after last gap, at height 233)
-        // Three brick blocks and a question block together
-        { x: 2295, y: 233, type: "brick" },
-        { x: 2325, y: 233, type: "brick" },
-        { x: 2355, y: 233, type: "brick" },
-        { x: 2385, y: 233, type: "question" },
-
-        // Block 100px below question block
-        { x: 2385, y: 320, type: "brick" },
-
-        // Two blocks 160px to the right
-        { x: 2545, y: 320, type: "brick" },
-        { x: 2575, y: 320, type: "brick" },
-
-        // Three question blocks 127px further, 100px off ground (320px height)
-        { x: 2702, y: 320, type: "question" },
-        { x: 2768, y: 320, type: "question" }, // +66px
-        { x: 2834, y: 320, type: "question" }, // +66px
-
-        // Question block above middle question block
-        { x: 2768, y: 224, type: "question", content: "mushroom" }, // 96px above middle block
-        // Single brick block 159px to the right of last question block
-        { x: 2993, y: 320, type: "brick" },
-
-        // Three brick blocks 62px to the right at height 224
-        { x: 3055, y: 224, type: "brick" },
-        { x: 3085, y: 224, type: "brick" },
-        { x: 3115, y: 224, type: "brick" },
-
-        // Brick-Question-Question-Brick pattern 126px to the right
-        { x: 3241, y: 224, type: "brick" },
-        { x: 3271, y: 224, type: "question" },
-        { x: 3301, y: 224, type: "question" },
-        { x: 3331, y: 224, type: "brick" },
-
-        // Two brick blocks 100px below the question blocks
-        { x: 3262, y: 324, type: "brick" },
-        { x: 3292, y: 324, type: "brick" },
+        // New section blocks
+        { x: 2740, y: 233, type: "brick" }, // 2550 + 190
+        { x: 2770, y: 233, type: "brick" }, // 2580 + 190
+        { x: 2800, y: 233, type: "brick" }, // 2610 + 190
+        { x: 2830, y: 233, type: "question" }, // 2640 + 190
+        { x: 2830, y: 320, type: "brick" }, // 2640 + 190
+        { x: 2990, y: 320, type: "brick" }, // 2800 + 190
+        { x: 3020, y: 320, type: "brick" }, // 2830 + 190
+        { x: 3147, y: 320, type: "question" }, // 2957 + 190
+        { x: 3213, y: 320, type: "question" }, // 3023 + 190
+        { x: 3279, y: 320, type: "question" }, // 3089 + 190
+        { x: 3213, y: 224, type: "question", content: "mushroom" }, // 3023 + 190
+        { x: 3438, y: 320, type: "brick" }, // 3248 + 190
+        { x: 3500, y: 224, type: "brick" }, // 3310 + 190
+        { x: 3530, y: 224, type: "brick" }, // 3340 + 190
+        { x: 3560, y: 224, type: "brick" }, // 3370 + 190
+        { x: 3686, y: 224, type: "brick" }, // 3496 + 190
+        { x: 3716, y: 224, type: "question" }, // 3526 + 190
+        { x: 3746, y: 224, type: "question" }, // 3556 + 190
+        { x: 3776, y: 224, type: "brick" }, // 3586 + 190
+        { x: 3707, y: 324, type: "brick" }, // 3517 + 190
+        { x: 3737, y: 324, type: "brick" }, // 3547 + 190
 
         // First staircase
-        // Bottom row - 4 blocks
-        { x: 3413, y: 416, type: "stair" },
-        { x: 3445, y: 416, type: "stair" },
-        { x: 3477, y: 416, type: "stair" },
-        { x: 3510, y: 416, type: "stair" },
-
-        // Second row - 3 blocks
-        { x: 3447, y: 384, type: "stair" },
-        { x: 3479, y: 384, type: "stair" },
-        { x: 3511, y: 384, type: "stair" },
-
-        // Third row - 2 blocks
-        { x: 3479, y: 352, type: "stair" },
-        { x: 3511, y: 352, type: "stair" },
-
-        // Top block
-        { x: 3511, y: 320, type: "stair" },
+        { x: 3874, y: 416, type: "stair" }, // 3858 + 16
+        { x: 3906, y: 416, type: "stair" }, // 3890 + 16
+        { x: 3938, y: 416, type: "stair" }, // 3922 + 16
+        { x: 3971, y: 416, type: "stair" }, // 3955 + 16
+        { x: 3908, y: 384, type: "stair" }, // 3892 + 16
+        { x: 3940, y: 384, type: "stair" }, // 3924 + 16
+        { x: 3972, y: 384, type: "stair" }, // 3956 + 16
+        { x: 3940, y: 352, type: "stair" }, // 3924 + 16
+        { x: 3972, y: 352, type: "stair" }, // 3956 + 16
+        { x: 3972, y: 320, type: "stair" }, // 3956 + 16
 
         // Next staircase
-        { x: 3575, y: 416, type: "stair" },
-        { x: 3607, y: 416, type: "stair" },
-        { x: 3639, y: 416, type: "stair" },
-        { x: 3671, y: 416, type: "stair" },
-        { x: 3575, y: 384, type: "stair" },
-        { x: 3607, y: 384, type: "stair" },
-        { x: 3639, y: 384, type: "stair" },
-        { x: 3575, y: 352, type: "stair" },
-        { x: 3607, y: 352, type: "stair" },
-        { x: 3575, y: 320, type: "stair" },
+        { x: 4036, y: 416, type: "stair" }, // 4020 + 16
+        { x: 4068, y: 416, type: "stair" }, // 4052 + 16
+        { x: 4100, y: 416, type: "stair" }, // 4084 + 16
+        { x: 4132, y: 416, type: "stair" }, // 4116 + 16
+        { x: 4036, y: 384, type: "stair" }, // 4020 + 16
+        { x: 4068, y: 384, type: "stair" }, // 4052 + 16
+        { x: 4100, y: 384, type: "stair" }, // 4084 + 16
+        { x: 4036, y: 352, type: "stair" }, // 4020 + 16
+        { x: 4068, y: 352, type: "stair" }, // 4052 + 16
+        { x: 4036, y: 320, type: "stair" }, // 4020 + 16
 
         // Bigger staircase
-        { x: 3799, y: 416, type: "stair" },
-        { x: 3831, y: 416, type: "stair" },
-        { x: 3863, y: 416, type: "stair" },
-        { x: 3895, y: 416, type: "stair" },
-        { x: 3927, y: 416, type: "stair" },
-        { x: 3831, y: 384, type: "stair" },
-        { x: 3863, y: 384, type: "stair" },
-        { x: 3895, y: 384, type: "stair" },
-        { x: 3927, y: 384, type: "stair" },
-        { x: 3863, y: 352, type: "stair" },
-        { x: 3895, y: 352, type: "stair" },
-        { x: 3927, y: 352, type: "stair" },
-        { x: 3895, y: 320, type: "stair" },
-        { x: 3927, y: 320, type: "stair" },
+        { x: 4260, y: 416, type: "stair" }, // 4244 + 16
+        { x: 4292, y: 416, type: "stair" }, // 4276 + 16
+        { x: 4324, y: 416, type: "stair" }, // 4308 + 16
+        { x: 4356, y: 416, type: "stair" }, // 4340 + 16
+        { x: 4388, y: 416, type: "stair" }, // 4372 + 16
+        { x: 4292, y: 384, type: "stair" }, // 4276 + 16
+        { x: 4324, y: 384, type: "stair" }, // 4308 + 16
+        { x: 4356, y: 384, type: "stair" }, // 4340 + 16
+        { x: 4388, y: 384, type: "stair" }, // 4372 + 16
+        { x: 4324, y: 352, type: "stair" }, // 4308 + 16
+        { x: 4356, y: 352, type: "stair" }, // 4340 + 16
+        { x: 4388, y: 352, type: "stair" }, // 4372 + 16
+        { x: 4356, y: 320, type: "stair" }, // 4340 + 16
+        { x: 4388, y: 320, type: "stair" }, // 4372 + 16
 
-        // Final staircase (inverted)
-        { x: 4023, y: 416, type: "stair" },
-        { x: 4055, y: 416, type: "stair" },
-        { x: 4087, y: 416, type: "stair" },
-        { x: 4119, y: 416, type: "stair" },
-        { x: 4023, y: 384, type: "stair" },
-        { x: 4055, y: 384, type: "stair" },
-        { x: 4087, y: 384, type: "stair" },
-        { x: 4023, y: 352, type: "stair" },
-        { x: 4055, y: 352, type: "stair" },
-        { x: 4023, y: 320, type: "stair" },
+        // Final staircases
+        { x: 4484, y: 416, type: "stair" }, // 4468 + 16
+        { x: 4516, y: 416, type: "stair" }, // 4500 + 16
+        { x: 4548, y: 416, type: "stair" }, // 4532 + 16
+        { x: 4580, y: 416, type: "stair" }, // 4564 + 16
+        { x: 4484, y: 384, type: "stair" }, // 4468 + 16
+        { x: 4516, y: 384, type: "stair" }, // 4500 + 16
+        { x: 4548, y: 384, type: "stair" }, // 4532 + 16
+        { x: 4484, y: 352, type: "stair" }, // 4468 + 16
+        { x: 4516, y: 352, type: "stair" }, // 4500 + 16
+        { x: 4484, y: 320, type: "stair" },
 
-        { x: 4351, y: 272, type: "brick" },
-        { x: 4381, y: 272, type: "brick" },
-        { x: 4411, y: 272, type: "question" },
-        { x: 4441, y: 272, type: "brick" },
+        { x: 4796, y: 272, type: "brick" }, // 4606 + 190
+        { x: 4826, y: 272, type: "brick" }, // 4636 + 190
+        { x: 4856, y: 272, type: "question" }, // 4666 + 190
+        { x: 4886, y: 272, type: "brick" }, // 4696 + 190
 
-        // Final staircase (base of 9, 10px after second pipe)
-        { x: 4760, y: 416, type: "stair" },
-        { x: 4792, y: 416, type: "stair" },
-        { x: 4824, y: 416, type: "stair" },
-        { x: 4856, y: 416, type: "stair" },
-        { x: 4888, y: 416, type: "stair" },
-        { x: 4920, y: 416, type: "stair" },
-        { x: 4952, y: 416, type: "stair" },
-        { x: 4984, y: 416, type: "stair" },
-        { x: 5016, y: 416, type: "stair" }, // Base row (9 blocks)
+        // Final staircase
+        { x: 5205, y: 416, type: "stair" }, // 5015 + 190
+        { x: 5237, y: 416, type: "stair" }, // 5047 + 190
+        { x: 5269, y: 416, type: "stair" }, // 5079 + 190
+        { x: 5301, y: 416, type: "stair" }, // 5111 + 190
+        { x: 5333, y: 416, type: "stair" }, // 5143 + 190
+        { x: 5365, y: 416, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 416, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 416, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 416, type: "stair" }, // 5271 + 190
 
-        { x: 4792, y: 384, type: "stair" },
-        { x: 4824, y: 384, type: "stair" },
-        { x: 4856, y: 384, type: "stair" },
-        { x: 4888, y: 384, type: "stair" },
-        { x: 4920, y: 384, type: "stair" },
-        { x: 4952, y: 384, type: "stair" },
-        { x: 4984, y: 384, type: "stair" },
-        { x: 5016, y: 384, type: "stair" }, // Second row (8 blocks)
+        { x: 5237, y: 384, type: "stair" }, // 5047 + 190
+        { x: 5269, y: 384, type: "stair" }, // 5079 + 190
+        { x: 5301, y: 384, type: "stair" }, // 5111 + 190
+        { x: 5333, y: 384, type: "stair" }, // 5143 + 190
+        { x: 5365, y: 384, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 384, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 384, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 384, type: "stair" }, // 5271 + 190
 
-        { x: 4824, y: 352, type: "stair" },
-        { x: 4856, y: 352, type: "stair" },
-        { x: 4888, y: 352, type: "stair" },
-        { x: 4920, y: 352, type: "stair" },
-        { x: 4952, y: 352, type: "stair" },
-        { x: 4984, y: 352, type: "stair" },
-        { x: 5016, y: 352, type: "stair" }, // Third row (7 blocks)
+        { x: 5269, y: 352, type: "stair" }, // 5079 + 190
+        { x: 5301, y: 352, type: "stair" }, // 5111 + 190
+        { x: 5333, y: 352, type: "stair" }, // 5143 + 190
+        { x: 5365, y: 352, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 352, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 352, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 352, type: "stair" }, // 5271 + 190
 
-        { x: 4856, y: 320, type: "stair" },
-        { x: 4888, y: 320, type: "stair" },
-        { x: 4920, y: 320, type: "stair" },
-        { x: 4952, y: 320, type: "stair" },
-        { x: 4984, y: 320, type: "stair" },
-        { x: 5016, y: 320, type: "stair" }, // Fourth row (6 blocks)
+        { x: 5301, y: 320, type: "stair" }, // 5111 + 190
+        { x: 5333, y: 320, type: "stair" }, // 5143 + 190
+        { x: 5365, y: 320, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 320, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 320, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 320, type: "stair" }, // 5271 + 190
 
-        { x: 4888, y: 288, type: "stair" },
-        { x: 4920, y: 288, type: "stair" },
-        { x: 4952, y: 288, type: "stair" },
-        { x: 4984, y: 288, type: "stair" },
-        { x: 5016, y: 288, type: "stair" }, // Fifth row (5 blocks)
+        { x: 5333, y: 288, type: "stair" }, // 5143 + 190
+        { x: 5365, y: 288, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 288, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 288, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 288, type: "stair" }, // 5271 + 190
 
-        { x: 4920, y: 256, type: "stair" },
-        { x: 4952, y: 256, type: "stair" },
-        { x: 4984, y: 256, type: "stair" },
-        { x: 5016, y: 256, type: "stair" }, // Sixth row (4 blocks)
+        { x: 5365, y: 256, type: "stair" }, // 5175 + 190
+        { x: 5397, y: 256, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 256, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 256, type: "stair" }, // 5271 + 190
 
-        { x: 4952, y: 224, type: "stair" },
-        { x: 4984, y: 224, type: "stair" },
-        { x: 5016, y: 224, type: "stair" }, // Seventh row (3 blocks)
+        { x: 5397, y: 224, type: "stair" }, // 5207 + 190
+        { x: 5429, y: 224, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 224, type: "stair" }, // 5271 + 190
 
-        { x: 4984, y: 192, type: "stair" },
-        { x: 5016, y: 192, type: "stair" }, // Eighth row (2 blocks)
+        { x: 5429, y: 192, type: "stair" }, // 5239 + 190
+        { x: 5461, y: 192, type: "stair" }, // 5271 + 190
 
-        { x: 5143, y: 416, type: "stair" },
+        { x: 5588, y: 416, type: "stair" }, // 5398 + 190
       ],
 
       levelEnd: {
-        flagpole: { x: 5157, y: 128 },
-        castle: { x: 5267, y: 288 },
+        flagpole: { x: 5602, y: 128 }, // 5412 + 190
+        castle: { x: 5712, y: 288 }, // 5522 + 190
       },
 
-      // Keeping your existing pipe placements
+      // Pipe placements - shifted by 255
       pipes: [
-        { x: 500, y: 387, size: "small" },
-        { x: 764, y: 354, size: "medium" },
-        { x: 965, y: 320, size: "large" },
-        { x: 1262, y: 320, size: "large" },
-        { x: 4251, y: 387, size: "small" }, // 132px from last stair
-        { x: 4574, y: 387, size: "small" }, // 223px after block group
+        { x: 895, y: 387, size: "small" },
+        { x: 1216, y: 354, size: "medium" },
+        { x: 1471, y: 320, size: "large" },
+        { x: 1825, y: 320, size: "large" },
+        { x: 4742, y: 387, size: "small" }, // Changed from 4506 to 4742 (4486 + 256)
+        { x: 5120, y: 387, size: "small" },
       ],
 
-      // Keeping your existing enemy placements
+      // Enemy placements - shifted by 255
       enemies: [
-        { type: "goomba", x: 380, y: 368 },
-        { type: "goomba", x: 965, y: 320 },
-        { type: "goomba", x: 1262, y: 320 },
-        { type: "goomba", x: 1190, y: 320 },
+        //{ type: "goomba", x: 635, y: 368 }, // 380 + 255
+        { type: "goomba", x: 1220, y: 320 }, // 965 + 255
+        { type: "goomba", x: 1517, y: 320 }, // 1262 + 255
+        { type: "goomba", x: 1445, y: 320 }, // 1190 + 255
       ],
     });
   }
@@ -300,7 +286,6 @@ class LevelManager {
     this.loadLevel(this.currentLevel);
   }
 
-  // Level selection UI
   createLevelSelector() {
     const container = document.createElement("div");
     container.style.position = "absolute";
