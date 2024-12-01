@@ -5,6 +5,7 @@ class Block extends Sprite {
     this.y = y;
     this.type = type;
     this.content = content;
+    this.state = "idle";
 
     // Set size based on block type
     if (this.type === "stair") {
@@ -41,52 +42,105 @@ class Block extends Sprite {
   }
 
   update(sprites, keys) {
-    if (this.hitCooldown > 0) {
-      this.hitCooldown--;
-    }
-
-    sprites.forEach((sprite) => {
-      if (sprite instanceof Player) {
-        // First check for hit from below
-        if (
-          (this.type === "question" || this.type === "brick") &&
-          !this.hit &&
-          this.isHittingFromBelow(sprite)
-        ) {
-          this.handleHit(sprites);
-          // Push player down slightly when hitting block
-          sprite.y = this.y + this.height;
-          sprite.velocityY = 2; // Give a small downward bounce
+    switch (this.state) {
+      case "idle":
+        if (this.hitCooldown > 0) {
+          this.hitCooldown--;
         }
-        // Then handle normal collisions
-        else if (this.checkCollision(sprite)) {
-          this.resolveCollision(sprite);
+
+        // Update question block animation
+        if (this.type === "question" && !this.hit) {
+          this.frameTimer++;
+          if (this.frameTimer >= this.frameDelay) {
+            this.frameTimer = 0;
+            this.frameIndex =
+              (this.frameIndex + 1) % this.questionBlockFrames.length;
+          }
         }
-      }
-    });
 
-    // Handle hit animation
-    if (this.hitAnimation > 0) {
-      this.y = this.originalY - Math.sin(this.hitAnimation * Math.PI) * 8;
-      this.hitAnimation = Math.max(0, this.hitAnimation - 0.1);
-      if (this.hitAnimation === 0) {
-        this.y = this.originalY;
-      }
-    }
+        sprites.forEach((sprite) => {
+          if (sprite instanceof Player) {
+            if (
+              (this.type === "question" || this.type === "brick") &&
+              !this.hit &&
+              this.isHittingFromBelow(sprite)
+            ) {
+              this.state = "hit";
+              sprite.y = this.y + this.height;
+              sprite.velocityY = 2;
+            } else if (this.checkCollision(sprite)) {
+              this.resolveCollision(sprite);
+            }
+          }
+        });
+        break;
 
-    // Update question block animation
-    if (this.type === "question" && !this.hit) {
-      this.frameTimer++;
-      if (this.frameTimer >= this.frameDelay) {
-        this.frameTimer = 0;
-        this.frameIndex =
-          (this.frameIndex + 1) % this.questionBlockFrames.length;
-      }
+      case "hit":
+        const shouldBreak = this.handleHit(sprites);
+        if (shouldBreak) {
+          return true; // Remove the block
+        }
+        this.state = "hitAnimation";
+        this.hitAnimation = 1;
+        break;
+
+      case "hitAnimation":
+        if (this.hitAnimation > 0) {
+          this.y = this.originalY - Math.sin(this.hitAnimation * Math.PI) * 8;
+          this.hitAnimation = Math.max(0, this.hitAnimation - 0.1);
+          if (this.hitAnimation === 0) {
+            this.y = this.originalY;
+            this.state = "idle";
+          }
+        }
+        break;
     }
 
     return false;
   }
 
+  handleHit(sprites) {
+    if (this.hit || this.hitCooldown > 0) return false;
+    this.hitCooldown = 10;
+
+    switch (this.type) {
+      case "question":
+        this.hit = true;
+        if (this.content === "mushroom") {
+          const mushroom = new Mushroom(this.x, this.y - this.height);
+          sprites.push(mushroom);
+        } else {
+          const coin = new Coin(this.x + (this.width - 24) / 2, this.y, true);
+          sprites.push(coin);
+        }
+        return false;
+
+      case "brick":
+        const player = sprites.find((sprite) => sprite instanceof Player);
+        if (player && player.isSuper) {
+          // Create four particles
+          sprites.push(new BrickParticle(this.x, this.y, -1));
+          sprites.push(new BrickParticle(this.x + this.width, this.y, 1));
+          sprites.push(
+            new BrickParticle(this.x, this.y + this.height / 2, -0.5)
+          );
+          sprites.push(
+            new BrickParticle(
+              this.x + this.width,
+              this.y + this.height / 2,
+              0.5
+            )
+          );
+          return true; // Remove the block
+        }
+        return false;
+
+      default:
+        return false;
+    }
+  }
+
+  // Rest of the class methods remain the same...
   draw(ctx) {
     if (this.type === "stair") {
       if (!this.stairSpriteSheet.complete) return;
@@ -98,7 +152,7 @@ class Block extends Sprite {
         16,
         this.x,
         this.y,
-        32, // Fixed size for stairs
+        32,
         32
       );
       return;
@@ -129,7 +183,7 @@ class Block extends Sprite {
       16,
       this.x,
       this.y,
-      30, // Fixed size for brick and question blocks
+      30,
       30
     );
   }
@@ -154,7 +208,6 @@ class Block extends Sprite {
     );
 
     if (overlapX < overlapY) {
-      // Horizontal collision
       if (player.x < this.x) {
         player.x = this.x - player.width;
       } else {
@@ -162,14 +215,11 @@ class Block extends Sprite {
       }
       player.velocityX = 0;
     } else {
-      // Vertical collision
       if (player.y < this.y) {
-        // Player is above the block
         player.y = this.y - player.height;
         player.velocityY = 0;
         player.isGrounded = true;
       } else {
-        // Player is below the block
         player.y = this.y + this.height;
         player.velocityY = Math.max(0, player.velocityY);
       }
@@ -186,27 +236,5 @@ class Block extends Sprite {
     const movingUp = player.velocityY < 0;
 
     return verticalOverlap && horizontalOverlap && movingUp;
-  }
-
-  handleHit(sprites) {
-    if (this.hit || this.hitCooldown > 0) return;
-
-    this.hitAnimation = 1;
-    this.hitCooldown = 10;
-
-    if (this.type === "question") {
-      this.hit = true;
-
-      if (this.content === "mushroom") {
-        const mushroom = new Mushroom(this.x, this.y - this.height);
-        sprites.push(mushroom);
-      } else {
-        // Default behavior: spawn coin
-        const coin = new Coin(this.x + (this.width - 24) / 2, this.y, true);
-        sprites.push(coin);
-      }
-    } else if (this.type === "brick") {
-      this.hitAnimation = 1;
-    }
   }
 }
