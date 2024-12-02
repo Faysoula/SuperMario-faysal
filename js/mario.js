@@ -495,7 +495,7 @@ class Player extends Sprite {
         this.velocityX = 0;
       }
     }
-    if (this.y > 600 && !this.isDying) this.respawn();
+    if (this.y > 480 && !this.isDying) this.die();
 
     this.wasGrounded = this.isGrounded;
     this.isGrounded = false;

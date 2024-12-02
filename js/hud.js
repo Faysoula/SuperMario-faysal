@@ -2,7 +2,7 @@ class HUD extends Sprite {
   constructor() {
     super();
     this.score = 0;
-    this.time = 300;
+    this.time = 3;
     this.coins = 0;
     this.lives = 3;
     this.lastUpdateTime = Date.now();
@@ -10,41 +10,48 @@ class HUD extends Sprite {
     this.height = 40;
     this.x = 0;
     this.y = 0;
-    this.levelManager = null; // Initialize as null, will be set later
-    
+    this.levelManager = null;
 
-    // State machine for game over sequence
     this.state = {
       current: "PLAYING",
       frames: 0,
+      deathType: null, // Will be either "TIME_UP" or "GAME_OVER"
     };
 
-    // Game over image
+    // Game state images
     this.gameOverImage = new Image();
     this.gameOverImage.src = "../images/gameover.jpg";
+    this.timeUpImage = new Image();
+    this.timeUpImage.src = "../images/timeup.png";
+
+    // State transition timing
+    this.timeUpDuration = 120;
+    this.deathDelay = 70;
+    this.gameOverDuration = 300;
   }
 
   setLevelManager(levelManager) {
     this.levelManager = levelManager;
   }
 
-  update(sprites, keys) {
+  update(sprites) {
     switch (this.state.current) {
       case "PLAYING":
-        // Update player position for HUD
         const player = sprites.find((sprite) => sprite instanceof Player);
         if (player) {
           this.x = player.x;
           this.y = player.y;
         }
 
-        // Update time
         const currentTime = Date.now();
         if (currentTime - this.lastUpdateTime >= 1000 && this.time > 0) {
           this.time--;
           this.lastUpdateTime = currentTime;
 
           if (this.time <= 0) {
+            this.state.current = "DEATH_ANIMATION";
+            this.state.frames = 0;
+            this.state.deathType = "TIME_UP";
             sprites.forEach((sprite) => {
               if (sprite instanceof Player) {
                 sprite.die();
@@ -54,22 +61,41 @@ class HUD extends Sprite {
         }
         break;
 
-      case "GAME_OVER":
-        // Count frames during game over
+      case "DEATH_ANIMATION":
         this.state.frames++;
+        if (this.state.frames >= this.deathDelay) {
+          this.state.current = this.state.deathType;
+          this.state.frames = 0;
+        }
+        break;
 
-        // Wait 5 seconds (300 frames at 60fps)
-        if (this.state.frames >= 300) {
+      case "TIME_UP":
+        this.state.frames++;
+        if (this.state.frames >= this.timeUpDuration) {
+          if (this.lives > 0) {
+            this.state.current = "PLAYING";
+            this.time = 300;
+            this.lastUpdateTime = Date.now();
+            if (this.levelManager) {
+              this.levelManager.restartLevel();
+            }
+          } else {
+            this.state.current = "GAME_OVER";
+          }
+          this.state.frames = 0;
+        }
+        break;
+
+      case "GAME_OVER":
+        this.state.frames++;
+        if (this.state.frames >= this.gameOverDuration) {
           if (this.levelManager) {
-            // Reset game state before restarting
             this.lives = 3;
             this.score = 0;
             this.coins = 0;
             this.time = 300;
-            this.state.frames = 0;
             this.state.current = "PLAYING";
-
-            // Force a complete level reload
+            this.state.frames = 0;
             this.levelManager.restartLevel();
           }
         }
@@ -79,39 +105,56 @@ class HUD extends Sprite {
     return false;
   }
 
-  resetHUD() {
-    this.score = 0;
-    this.time = 300;
-    this.coins = 0;
-    this.lives = 3;
-    this.lastUpdateTime = Date.now();
-  }
-
   draw(ctx) {
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    // Handle different states
-    if (this.state.current === "GAME_OVER") {
-      this.drawGameOver(ctx);
-    } else {
-      this.drawHUD(ctx);
+    switch (this.state.current) {
+      case "PLAYING":
+      case "DEATH_ANIMATION":
+        this.drawHUD(ctx);
+        break;
+
+      case "TIME_UP":
+        if (this.timeUpImage.complete) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.drawImage(
+            this.timeUpImage,
+            0,
+            0,
+            ctx.canvas.width,
+            ctx.canvas.height
+          );
+        }
+        break;
+
+      case "GAME_OVER":
+        if (this.gameOverImage.complete) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.drawImage(
+            this.gameOverImage,
+            0,
+            0,
+            ctx.canvas.width,
+            ctx.canvas.height
+          );
+        }
+        break;
     }
 
     ctx.restore();
   }
 
   drawHUD(ctx) {
-    // Background
     ctx.fillStyle = "#9494ff";
     ctx.fillRect(0, 0, ctx.canvas.width, 40);
 
-    // Text setup
     ctx.font = "16px PressStart2P";
     ctx.fillStyle = "#FFFFFF";
     ctx.textBaseline = "top";
 
-    // Score
     const scoreX = 40;
     ctx.textAlign = "left";
     ctx.fillText("SCORE", scoreX, 5);
@@ -121,45 +164,26 @@ class HUD extends Sprite {
     if (scoreString.length >= 4) scoreNumberX = 55;
     ctx.fillText(scoreString, scoreNumberX, 22);
 
-    // Time
-    ctx.textAlign = "center";
     const timeX = ctx.canvas.width * 0.4;
+    ctx.textAlign = "center";
     ctx.fillText("TIME", timeX, 5);
     ctx.fillText(this.time.toString(), timeX, 22);
 
-    // Coins
     const coinsX = ctx.canvas.width * 0.6;
     ctx.fillText("COINS", coinsX, 5);
     ctx.fillText(this.coins.toString(), coinsX, 22);
 
-    // Lives
     const livesX = ctx.canvas.width - 80;
     ctx.fillText("LIVES", livesX, 5);
     ctx.fillText(this.lives.toString(), livesX, 22);
   }
 
-  drawGameOver(ctx) {
-    if (this.gameOverImage.complete) {
-      // Black background first
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      // Game over image
-      ctx.drawImage(
-        this.gameOverImage,
-        0,
-        0,
-        ctx.canvas.width,
-        ctx.canvas.height
-      );
-    }
-  }
-
   loseLife() {
     this.lives--;
     if (this.lives <= 0) {
-      this.state.current = "GAME_OVER";
+      this.state.current = "DEATH_ANIMATION";
       this.state.frames = 0;
+      this.state.deathType = "GAME_OVER";
     }
   }
 
@@ -178,5 +202,16 @@ class HUD extends Sprite {
 
   addScore(points) {
     this.score += points;
+  }
+
+  resetHUD() {
+    this.score = 0;
+    this.time = 300;
+    this.coins = 0;
+    this.lives = 3;
+    this.lastUpdateTime = Date.now();
+    this.state.current = "PLAYING";
+    this.state.frames = 0;
+    this.state.deathType = null;
   }
 }
