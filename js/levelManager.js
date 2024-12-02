@@ -85,7 +85,7 @@ class LevelManager {
       id: "1-1",
       width: 5945, // Increased by 255 to account for the shift
       height: 480,
-      playerSpawn: { x: 300, y: 380 },
+      playerSpawn: { x: 81, y: 380 },
 
       // Ground segments - Shifted by 255 pixels
       groundSegments: [
@@ -300,8 +300,8 @@ class LevelManager {
     grid.style.gridTemplateColumns = "repeat(4, 1fr)";
     grid.style.gap = "5px";
 
-    for (let world = 1; world <= 8; world++) {
-      for (let level = 1; level <= 4; level++) {
+    for (let world = 1; world <= 1; world++) {
+      for (let level = 1; level <= 2; level++) {
         const button = document.createElement("button");
         button.textContent = `${world}-${level}`;
         button.style.padding = "5px";

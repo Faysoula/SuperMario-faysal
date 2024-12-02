@@ -257,10 +257,16 @@ class Player extends Sprite {
   }
 
   die() {
-    if (this.isSuper) {
-      // If Super Mario, revert to small instead of dying
+    // Check if dying from time up
+    const hud = this.levelManager?.game.sprites.find(
+      (sprite) => sprite instanceof HUD
+    );
+    const isTimeUp = hud && hud.time <= 0;
+
+    if (this.isSuper && !isTimeUp) {
+      // Only revert to small if not dying from time up
       this.revertToSmall();
-      this.velocityY = -8; // Small bounce when hit
+      this.velocityY = -8;
       return;
     }
 
@@ -271,9 +277,6 @@ class Player extends Sprite {
       this.animation.setState("death");
     }
 
-    const hud = this.levelManager.game.sprites.find(
-      (sprite) => sprite instanceof HUD
-    );
     if (hud) {
       hud.loseLife();
     }
