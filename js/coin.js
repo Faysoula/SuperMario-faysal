@@ -60,6 +60,9 @@ class Coin extends Sprite {
           !this.collected
         ) {
           this.collected = true;
+          if (hud) {
+            hud.addCoin();
+          }
           this.state = "removing";
         }
       });
@@ -94,6 +97,7 @@ class Coin extends Sprite {
       if (this.fadeOut <= 0) {
         return true; // Remove the coin
       }
+      
     }
 
     return false;

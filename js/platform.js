@@ -1,5 +1,5 @@
 class Platform extends Sprite {
-  constructor(x, y, width, height) {
+  constructor(x, y, width, height, isUnderground = false) {
     super();
     this.x = x;
     this.y = y;
@@ -8,14 +8,25 @@ class Platform extends Sprite {
 
     // Sprite sheet setup
     this.spriteSheet = new Image();
-    this.spriteSheet.src = "../images/ground.png";
+    this.spriteSheet.src = "../images/giant tileset.png";
 
     // Tile size for ground blocks
     this.tileSize = 16;
 
-    // Source coordinates for the ground tile
-    this.groundTileX = 0;
-    this.groundTileY = 16;
+    this.updateSprites(isUnderground);
+  }
+
+  updateSprites(isUnderground) {
+    console.log(isUnderground);
+
+    if (isUnderground) {
+      this.groundTileX = 147;
+      this.groundTileY = 16;
+    } else {
+      console.log("Overworld");
+      this.groundTileX = 0;
+      this.groundTileY = 16;
+    }
   }
 
   update() {

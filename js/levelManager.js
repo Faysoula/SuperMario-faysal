@@ -6,20 +6,30 @@ class LevelManager {
     this.levelState = "PLAYING"; // PLAYING, COMPLETED, FAILED
     this.hud = new HUD(); // Create HUD once in constructor
     this.hud.setLevelManager(this);
+    this.isUnderground = false;
   }
 
   loadLevel(levelIndex) {
     if (levelIndex >= 0 && levelIndex < this.levels.length) {
+      this.isUnderground = levelIndex === 1;
       this.game.sprites = [];
       const levelData = this.levels[levelIndex];
       this.currentLevel = levelIndex;
 
+      if (this.isUnderground) {
+        this.game.canvas.style.backgroundColor = "#000000"; // Set canvas background
+      } else {
+        this.game.canvas.style.backgroundColor = "#6B8CFF";
+      }
+
       this.game.setLevelBoundaries(levelData.width, levelData.height);
       this.game.camera.reset();
 
-      const background = new Background(0, 0);
-      background.setGame(this.game);
-      this.game.addSprite(background);
+      if (!this.isUnderground) {
+        const background = new Background(0, 0);
+        background.setGame(this.game);
+        this.game.addSprite(background);
+      }
 
       const player = new Player(
         levelData.playerSpawn.x,
@@ -37,13 +47,20 @@ class LevelManager {
           segment.x,
           segment.y || this.game.canvas.height - segment.height,
           segment.width,
-          segment.height
+          segment.height,
+          this.isUnderground
         );
         this.game.addSprite(ground);
       });
 
       levelData.blocks.forEach((block) => {
-        const newBlock = new Block(block.x, block.y, block.type, block.content);
+        const newBlock = new Block(
+          block.x,
+          block.y,
+          block.type,
+          block.content,
+          this.isUnderground
+        );
         this.game.addSprite(newBlock);
       });
 
@@ -75,7 +92,13 @@ class LevelManager {
         castle.setLevelManager(this);
         this.game.addSprite(castle);
       }
-      
+      if (levelData.coins) {
+        levelData.coins.forEach((coinData) => {
+          const coin = new Coin(coinData.x, coinData.y, false); // false means not pop-out coin
+          this.game.addSprite(coin);
+        });
+      }
+
       this.game.addSprite(this.hud);
     }
   }
@@ -85,7 +108,7 @@ class LevelManager {
       id: "1-1",
       width: 5945, // Increased by 255 to account for the shift
       height: 480,
-      playerSpawn: { x: 81, y: 380 },
+      playerSpawn: { x: 5000, y: 380 },
 
       // Ground segments - Shifted by 255 pixels
       groundSegments: [
@@ -275,6 +298,245 @@ class LevelManager {
         { type: "goomba", x: 1517, y: 320 }, // 1262 + 255
         { type: "goomba", x: 1445, y: 320 }, // 1190 + 255
       ],
+    });
+
+    this.levels.push({
+      id: "1-2",
+      width: 3392,
+      height: 480,
+      playerSpawn: { x: 1500, y: 300 }, // Start Mario above screen
+
+      // Define required arrays even if empty
+      groundSegments: [
+        { x: 0, width: 3392, height: 32 }, // Full ground
+      ],
+      blocks: [
+        // Left wall blocks
+        { x: 0, y: 418, type: "brick" },
+        { x: 0, y: 388, type: "brick" },
+        { x: 0, y: 358, type: "brick" },
+        { x: 0, y: 328, type: "brick" },
+        { x: 0, y: 298, type: "brick" },
+        { x: 0, y: 268, type: "brick" },
+        { x: 0, y: 238, type: "brick" },
+        { x: 0, y: 208, type: "brick" },
+        { x: 0, y: 178, type: "brick" },
+        { x: 0, y: 148, type: "brick" },
+        { x: 0, y: 118, type: "brick" },
+        { x: 0, y: 88, type: "brick" },
+        { x: 0, y: 58, type: "brick" },
+        { x: 0, y: 28, type: "brick" },
+        { x: 0, y: 0, type: "brick" },
+
+        // Ceiling blocks starting 160px from first block
+        { x: 160, y: 0, type: "brick" },
+        { x: 190, y: 0, type: "brick" },
+        { x: 220, y: 0, type: "brick" },
+        { x: 250, y: 0, type: "brick" },
+        { x: 280, y: 0, type: "brick" },
+        { x: 310, y: 0, type: "brick" },
+        { x: 340, y: 0, type: "brick" },
+        { x: 370, y: 0, type: "brick" },
+        { x: 400, y: 0, type: "brick" },
+        { x: 430, y: 0, type: "brick" },
+        { x: 460, y: 0, type: "brick" },
+        { x: 490, y: 0, type: "brick" },
+        { x: 520, y: 0, type: "brick" },
+        { x: 550, y: 0, type: "brick" },
+
+        { x: 160, y: 58, type: "brick" },
+        { x: 190, y: 58, type: "brick" },
+        { x: 220, y: 58, type: "brick" },
+        { x: 250, y: 58, type: "brick" },
+        { x: 280, y: 58, type: "brick" },
+        { x: 310, y: 58, type: "brick" },
+        { x: 340, y: 58, type: "brick" },
+        { x: 370, y: 58, type: "brick" },
+        { x: 400, y: 58, type: "brick" },
+        { x: 430, y: 58, type: "brick" },
+        { x: 460, y: 58, type: "brick" },
+        { x: 490, y: 58, type: "brick" },
+        { x: 520, y: 58, type: "brick" },
+        { x: 550, y: 58, type: "brick" },
+        { x: 580, y: 58, type: "brick" },
+        { x: 610, y: 58, type: "brick" },
+        { x: 640, y: 58, type: "brick" },
+        { x: 670, y: 58, type: "brick" },
+        { x: 700, y: 58, type: "brick" },
+        { x: 730, y: 58, type: "brick" },
+        { x: 760, y: 58, type: "brick" },
+        { x: 790, y: 58, type: "brick" },
+        { x: 820, y: 58, type: "brick" },
+        { x: 850, y: 58, type: "brick" },
+        { x: 880, y: 58, type: "brick" },
+        { x: 910, y: 58, type: "brick" },
+        { x: 940, y: 58, type: "brick" },
+        { x: 970, y: 58, type: "brick" },
+        { x: 1000, y: 58, type: "brick" },
+        { x: 1030, y: 58, type: "brick" },
+        { x: 1060, y: 58, type: "brick" },
+        { x: 1090, y: 58, type: "brick" },
+        { x: 1120, y: 58, type: "brick" },
+        { x: 1150, y: 58, type: "brick" },
+        { x: 1180, y: 58, type: "brick" },
+        { x: 1210, y: 58, type: "brick" },
+        { x: 1240, y: 58, type: "brick" },
+        { x: 1270, y: 58, type: "brick" },
+        { x: 1300, y: 58, type: "brick" },
+        { x: 1330, y: 58, type: "brick" },
+        { x: 1360, y: 58, type: "brick" },
+        { x: 1390, y: 58, type: "brick" },
+        { x: 1420, y: 58, type: "brick" },
+        { x: 1450, y: 58, type: "brick" },
+        { x: 1480, y: 58, type: "brick" },
+        { x: 1510, y: 58, type: "brick" },
+        { x: 1540, y: 58, type: "brick" },
+        { x: 1570, y: 58, type: "brick" },
+        { x: 1600, y: 58, type: "brick" },
+        { x: 1630, y: 58, type: "brick" },
+        { x: 1660, y: 58, type: "brick" },
+        { x: 1690, y: 58, type: "brick" },
+        { x: 1700, y: 58, type: "brick" },
+        { x: 1730, y: 58, type: "brick" },
+        { x: 1760, y: 58, type: "brick" },
+        { x: 1790, y: 58, type: "brick" },
+        { x: 1820, y: 58, type: "brick" },
+        { x: 1850, y: 58, type: "brick" },
+        { x: 1880, y: 58, type: "brick" },
+        { x: 1910, y: 58, type: "brick" },
+        { x: 1940, y: 58, type: "brick" },
+        { x: 1970, y: 58, type: "brick" },
+        { x: 2000, y: 58, type: "brick" },
+        { x: 2030, y: 58, type: "brick" },
+        { x: 2060, y: 58, type: "brick" },
+        { x: 2090, y: 58, type: "brick" },
+        { x: 2120, y: 58, type: "brick" },
+        { x: 2150, y: 58, type: "brick" },
+        { x: 2180, y: 58, type: "brick" },
+        { x: 2210, y: 58, type: "brick" },
+        { x: 2240, y: 58, type: "brick" },
+        { x: 2270, y: 58, type: "brick" },
+        { x: 2300, y: 58, type: "brick" },
+        { x: 2330, y: 58, type: "brick" },
+        { x: 2360, y: 58, type: "brick" },
+        { x: 2390, y: 58, type: "brick" },
+        { x: 2420, y: 58, type: "brick" },
+        { x: 2450, y: 58, type: "brick" },
+        { x: 2480, y: 58, type: "brick" },
+        { x: 2500, y: 58, type: "brick" },
+
+        // Question blocks row (250px right of Mario, 105px above ground)
+        { x: 320, y: 343, type: "question", content: "mushroom" }, // First with mushroom
+        { x: 350, y: 343, type: "question" },
+        { x: 380, y: 343, type: "question" },
+        { x: 410, y: 343, type: "question" },
+        { x: 440, y: 343, type: "question" },
+
+        // Stair sequence starting at x: 542
+        // First stack (1 block)
+        { x: 543, y: 416, type: "stair" },
+
+        // Second stack (2 blocks) at x: 572
+        { x: 607, y: 416, type: "stair" },
+        { x: 607, y: 384, type: "stair" },
+
+        // Third stack (3 blocks) at x: 602
+        { x: 671, y: 416, type: "stair" },
+        { x: 671, y: 384, type: "stair" },
+        { x: 671, y: 352, type: "stair" },
+
+        { x: 735, y: 416, type: "stair" },
+        { x: 735, y: 384, type: "stair" },
+        { x: 735, y: 352, type: "stair" },
+        { x: 735, y: 320, type: "stair" },
+
+        { x: 799, y: 416, type: "stair" },
+        { x: 799, y: 384, type: "stair" },
+        { x: 799, y: 352, type: "stair" },
+        { x: 799, y: 320, type: "stair" },
+
+        { x: 863, y: 416, type: "stair" },
+        { x: 927, y: 292, type: "brick" },
+        { x: 863, y: 384, type: "stair" },
+        { x: 863, y: 352, type: "stair" },
+
+        { x: 991, y: 416, type: "stair" },
+        { x: 991, y: 384, type: "stair" },
+        { x: 991, y: 352, type: "stair" },
+
+        { x: 1055, y: 416, type: "stair" },
+        { x: 1055, y: 384, type: "stair" },
+
+        { x: 1216, y: 266, type: "brick" },
+        { x: 1216, y: 296, type: "brick" },
+        { x: 1216, y: 326, type: "brick" },
+
+        // Horizontal row of 3 from bottom
+        { x: 1246, y: 326, type: "brick" },
+        { x: 1276, y: 326, type: "brick" },
+        { x: 1306, y: 326, type: "brick" },
+
+        // Up 2 from last block
+        { x: 1306, y: 296, type: "brick" },
+        { x: 1306, y: 266, type: "brick" },
+
+        // Right 3 from top
+        { x: 1336, y: 266, type: "brick" },
+        { x: 1366, y: 266, type: "brick" },
+        { x: 1396, y: 266, type: "brick" },
+
+        // Down 2 from last block
+        { x: 1396, y: 296, type: "brick" },
+        { x: 1396, y: 326, type: "brick" },
+
+        // Right 3 from bottom
+        { x: 1426, y: 326, type: "brick" },
+        { x: 1456, y: 326, type: "brick" },
+        { x: 1486, y: 326, type: "brick" },
+
+        // Up 2 from last block
+        { x: 1486, y: 296, type: "brick" },
+        { x: 1486, y: 266, type: "brick" },
+
+        { x: 1651, y: 326, type: "brick" }, // Bottom block
+        { x: 1651, y: 296, type: "brick" }, // Second from bottom
+        { x: 1651, y: 266, type: "brick" }, // Middle block
+        { x: 1651, y: 236, type: "brick" }, // Second from top
+        { x: 1651, y: 206, type: "brick" }, // Top block
+        { x: 1651, y: 176, type: "brick" }, // Top block
+
+        // Second column
+        { x: 1681, y: 326, type: "brick" }, // Bottom block
+        { x: 1681, y: 296, type: "brick" }, // Second from bottom
+        { x: 1681, y: 266, type: "brick" }, // Middle block
+        { x: 1681, y: 236, type: "brick" }, // Second from top
+        { x: 1681, y: 206, type: "brick" }, // Top block
+        { x: 1681, y: 176, type: "brick" }, // Top block
+        { x: 1711, y: 146, type: "brick" }, // Top block
+
+        { x: 1711, y: 146, type: "brick" }, // Bottom left of square
+        { x: 1741, y: 146, type: "brick" }, // Bottom right of square
+        { x: 1711, y: 116, type: "brick" }, // Top left of square
+        { x: 1741, y: 116, type: "brick" },
+        { x: 1711, y: 86, type: "brick" },
+        { }
+      ],
+      coins: [
+        // Left coins relative to the arc (x: 1216)
+        { x: 1250, y: 296 }, // Left upper
+        { x: 1280, y: 296 }, // Left lower
+
+        // Right coins relative to the arc (x: 1486)
+        { x: 1430, y: 296 }, // Right upper
+        { x: 1460, y: 296 }, // Right lower
+
+        // Top coins on the archway
+        { x: 1340, y: 236 }, // Top middle left
+        { x: 1370, y: 236 }, // Top middle right
+      ],
+      pipes: [],
+      enemies: [],
+      levelEnd: {},
     });
   }
 

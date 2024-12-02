@@ -67,7 +67,7 @@ class Castle extends Sprite {
       if (this.entryTimer >= this.entryDelay) {
         this.levelChangeTriggered = true;
         if (this.levelManager) {
-          this.levelManager.nextLevel();
+          this.levelManager.loadLevel(1);
         }
       }
     }

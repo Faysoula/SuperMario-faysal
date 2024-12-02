@@ -148,7 +148,12 @@ class HUD extends Sprite {
   }
 
   drawHUD(ctx) {
-    ctx.fillStyle = "#9494ff";
+    let isunderground = this.levelManager?.isUnderground;
+    if (isunderground) {
+      ctx.fillStyle = "#000000";
+    } else {
+    ctx.fillStyle = "#6b8cff";
+    }
     ctx.fillRect(0, 0, ctx.canvas.width, 40);
 
     ctx.font = "16px PressStart2P";

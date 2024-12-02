@@ -1,5 +1,5 @@
 class Block extends Sprite {
-  constructor(x, y, type = "brick", content) {
+  constructor(x, y, type = "brick", content,isUnderground = false) {
     super();
     this.x = x;
     this.y = y;
@@ -21,24 +21,40 @@ class Block extends Sprite {
     this.originalY = y;
     this.hitCooldown = 0;
 
-    this.spriteSheet = new Image();
-    this.stairSpriteSheet = new Image();
+    this.updateSprites(isUnderground);
 
-    this.spriteSheet.src = "../images/blocks.png";
-    this.stairSpriteSheet.src = "../images/giant tileset.png";
+    this.blockSprite = new Image();
+
+    this.blockSprite.src = "../images/giant tileset.png";
 
     this.frameIndex = 0;
     this.frameTimer = 0;
     this.frameDelay = 15;
-    this.questionBlockFrames = [
-      { x: 80, y: 112 },
-      { x: 96, y: 112 },
-      { x: 112, y: 112 },
-      { x: 96, y: 112 },
-    ];
-    this.hitFrame = { x: 128, y: 112 };
-    this.brickFrame = { x: 272, y: 112 };
-    this.stairFrame = { x: 0, y: 33 };
+    
+  }
+
+  updateSprites(isUnderground) {
+    if(isUnderground){
+      this.questionBlockFrames = [
+        { x: 394, y: 78 },
+        { x: 411, y: 78 },
+        { x: 428, y: 78 },
+        { x: 411, y: 78 },
+      ];
+      this.hitFrame = { x: 445, y: 78 };
+      this.brickFrame = { x: 181, y: 16 };
+      this.stairFrame = { x: 147, y: 33 };
+    }else{
+      this.questionBlockFrames = [
+        { x: 298, y: 78 },
+        { x: 315, y: 78 },
+        { x: 332, y: 78 },
+        { x: 315, y: 78 },
+      ];
+      this.hitFrame = { x: 51, y: 16 };
+      this.brickFrame = { x: 34, y: 16 };
+      this.stairFrame = { x: 0, y: 33 };
+    }
   }
 
   update(sprites, keys) {
@@ -143,9 +159,9 @@ class Block extends Sprite {
   // Rest of the class methods remain the same...
   draw(ctx) {
     if (this.type === "stair") {
-      if (!this.stairSpriteSheet.complete) return;
+      if (!this.blockSprite.complete) return;
       ctx.drawImage(
-        this.stairSpriteSheet,
+        this.blockSprite,
         this.stairFrame.x,
         this.stairFrame.y,
         16,
@@ -158,7 +174,7 @@ class Block extends Sprite {
       return;
     }
 
-    if (!this.spriteSheet.complete) return;
+    if (!this.blockSprite.complete) return;
     let sourceX, sourceY;
 
     if (this.type === "brick") {
@@ -176,7 +192,7 @@ class Block extends Sprite {
     }
 
     ctx.drawImage(
-      this.spriteSheet,
+      this.blockSprite,
       sourceX,
       sourceY,
       16,

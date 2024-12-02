@@ -21,11 +21,29 @@ class Goomba extends Sprite {
     this.frameIndex = 0;
     this.frameTimer = 0;
     this.frameDelay = 15;
-    this.frames = [
-      { x: 0, y: 4 },
-      { x: 30, y: 4 },
-      { x: 60, y: 8 },
-    ];
+    this.updateSprites();
+  }
+  setGame(game) {
+    this.game = game;
+    this.updateSprites();
+  }
+
+  updateSprites() {
+    const isUnderground = this.game?.levelManager?.isUnderground;
+
+    if (isUnderground) {
+      this.frames = [
+        { x: 0, y: 34 }, // Underground walking frame 1
+        { x: 30, y: 34 }, // Underground walking frame 2
+        { x: 60, y: 38 }, // Underground squished frame
+      ];
+    } else {
+      this.frames = [
+        { x: 0, y: 4 }, // Overworld walking frame 1
+        { x: 30, y: 4 }, // Overworld walking frame 2
+        { x: 60, y: 8 }, // Overworld squished frame
+      ];
+    }
   }
 
   update(sprites, keys) {

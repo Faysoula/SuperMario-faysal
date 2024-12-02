@@ -250,7 +250,7 @@ class Player extends Sprite {
 
       case "entering":
         if (this.levelManager) {
-          this.levelManager.nextLevel();
+          this.levelManager.loadLevel(1);
         }
         break;
     }
