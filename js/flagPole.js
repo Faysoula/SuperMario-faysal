@@ -18,10 +18,12 @@ class FlagPole extends Sprite {
   }
 
   update(sprites) {
+    const hud = sprites.find((sprite) => sprite instanceof HUD);
     sprites.forEach((sprite) => {
       if (sprite instanceof Player && !this.hasBeenTriggered) {
         if (this.checkCollision(sprite)) {
           this.hasBeenTriggered = true;
+          hud.addScore(400);
           sprite.startFlagpoleSlide(this);
         }
       }

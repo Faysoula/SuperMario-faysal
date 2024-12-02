@@ -14,7 +14,7 @@ class Goomba extends Sprite {
     this.deathDuration = 30;
     this.originalHeight = 32;
     this.squishHeight = 16;
-
+    this.hasAwardedPoints = false;
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/enemies.png";
 
@@ -29,6 +29,7 @@ class Goomba extends Sprite {
   }
 
   update(sprites, keys) {
+    const hud = sprites.find((sprite) => sprite instanceof HUD);
     if (this.isDead) {
       this.deathTimer++;
       return this.deathTimer >= this.deathDuration;
@@ -83,6 +84,9 @@ class Goomba extends Sprite {
 
             if (hitFromAbove) {
               this.die();
+              if (hud) {
+                hud.addScore(200);
+              }
               sprite.velocityY = -8;
             } else {
               sprite.takeDamage();
@@ -96,6 +100,7 @@ class Goomba extends Sprite {
       if (this.velocityX < 0 && this.x <= 0) this.velocityX = 1;
       if (this.velocityX > 0 && this.x >= 3000 - this.width)
         this.velocityX = -1;
+    } else {
     }
 
     return false;

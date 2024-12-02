@@ -20,6 +20,7 @@ class Mushroom extends Sprite {
   }
 
   update(sprites) {
+    const hud = sprites.find((sprite) => sprite instanceof HUD);
     if (this.isCollected) return true;
 
     // Handle emergence animation from block
@@ -43,7 +44,7 @@ class Mushroom extends Sprite {
     this.isGrounded = false;
 
     sprites.forEach((sprite) => {
-      const spriteType = sprite.constructor.name; // Get the sprite type dynamically
+      const spriteType = sprite.constructor.name;
 
       switch (spriteType) {
         case "Platform":
@@ -60,6 +61,7 @@ class Mushroom extends Sprite {
             !sprite.isTransforming
           ) {
             this.isCollected = true;
+            hud.addScore(1000);
             sprite.transformToSuper();
           }
           break;

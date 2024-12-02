@@ -7,7 +7,13 @@ levelManager.loadLevel(0);
 
 levelManager.createLevelSelector();
 
+if (game.keys["r"] || game.keys["R"]) {
+  if (this.levelManager) {
+    levelManager.restartLevel();
+  }
+}
+
 setInterval(() => {
-    game.update();
-    game.draw();
-    }, 1000/60);
+  game.update();
+  game.draw();
+}, 1000 / 60);

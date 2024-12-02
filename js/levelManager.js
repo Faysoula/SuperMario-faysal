@@ -4,7 +4,8 @@ class LevelManager {
     this.currentLevel = 0;
     this.levels = [];
     this.levelState = "PLAYING"; // PLAYING, COMPLETED, FAILED
-    this.hud = new HUD();
+    this.hud = new HUD(); // Create HUD once in constructor
+    this.hud.setLevelManager(this);
   }
 
   loadLevel(levelIndex) {
@@ -16,8 +17,6 @@ class LevelManager {
       this.game.setLevelBoundaries(levelData.width, levelData.height);
       this.game.camera.reset();
 
-      this.game.addSprite(this.hud);
-      
       const background = new Background(0, 0);
       background.setGame(this.game);
       this.game.addSprite(background);
@@ -77,6 +76,7 @@ class LevelManager {
         this.game.addSprite(castle);
       }
       
+      this.game.addSprite(this.hud);
     }
   }
 
@@ -85,7 +85,7 @@ class LevelManager {
       id: "1-1",
       width: 5945, // Increased by 255 to account for the shift
       height: 480,
-      playerSpawn: { x: 300, y: 380 }, // Changed from 156 to 81
+      playerSpawn: { x: 300, y: 380 },
 
       // Ground segments - Shifted by 255 pixels
       groundSegments: [
@@ -285,6 +285,7 @@ class LevelManager {
   }
 
   restartLevel() {
+    // Reload the current level completely
     this.loadLevel(this.currentLevel);
   }
 

@@ -40,7 +40,6 @@ class Player extends Sprite {
     this.hasLandedAfterPole = false;
     this.flagpoleLandingPosition = 0;
 
-
     // Power-up related properties
     this.isSuper = false;
     this.isTransforming = false;
@@ -63,7 +62,7 @@ class Player extends Sprite {
     };
 
     this.normalHeight = 60;
-    this.crouchHeight = 40; 
+    this.crouchHeight = 40;
     this.heightDifference = this.normalHeight - this.crouchHeight;
 
     this.spriteSheet = new Image();
@@ -161,8 +160,8 @@ class Player extends Sprite {
     this.direction = -1; // Face left initially
     this.slidePhase = "left";
     if (this.isSuper) {
-      this.animation.setState("flagpoleLeft");// uses the this
-    }else {
+      this.animation.setState("flagpoleLeft"); // uses the this
+    } else {
       this.animation.setState("flagpoleLeft");
     }
     // Start with left animation
@@ -271,9 +270,28 @@ class Player extends Sprite {
       this.velocityX = 0;
       this.animation.setState("death");
     }
+
+    const hud = this.levelManager.game.sprites.find(
+      (sprite) => sprite instanceof HUD
+    );
+    if (hud) {
+      hud.loseLife();
+    }
   }
 
   update(sprites, keys, camera) {
+    if (keys["r"] || keys["R"]) {
+      if (this.levelManager) {
+        const hud = this.levelManager.game.sprites.find(
+          (sprite) => sprite instanceof HUD
+        );
+        if (hud) {
+          hud.resetHUD();
+        }
+        this.levelManager.restartLevel();
+        this.respawn(camera);
+      }
+    }
     this.updateDamageState();
 
     if (this.isDying) {
@@ -383,7 +401,7 @@ class Player extends Sprite {
         if (!this.isCrouching) {
           this.isCrouching = true;
           this.height = this.crouchHeight;
-          this.y += this.heightDifference ;
+          this.y += this.heightDifference;
           this.animation.setState(
             this.direction === 1 ? "crouchRight" : "crouchLeft"
           );
@@ -510,19 +528,26 @@ class Player extends Sprite {
   }
 
   respawn() {
-    this.x = this.spawnX;
-    this.y = this.spawnY;
-    this.velocityX = 0;
-    this.velocityY = 0;
-    this.isDying = false;
-    this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
+    const hud = this.levelManager.game.sprites.find(
+      (sprite) => sprite instanceof HUD
+    );
 
-    if (this.camera) {
-      this.camera.reset();
-    }
+    // Only respawn if we still have lives
+    if (hud && hud.lives > 0) {
+      this.x = this.spawnX;
+      this.y = this.spawnY;
+      this.velocityX = 0;
+      this.velocityY = 0;
+      this.isDying = false;
+      this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
 
-    if (this.levelManager) {
-      this.levelManager.restartLevel();
+      if (this.camera) {
+        this.camera.reset();
+      }
+
+      if (this.levelManager) {
+        this.levelManager.restartLevel();
+      }
     }
   }
 
