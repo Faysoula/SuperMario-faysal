@@ -498,28 +498,72 @@ class LevelManager {
         { x: 1486, y: 296, type: "brick" },
         { x: 1486, y: 266, type: "brick" },
 
-        { x: 1651, y: 326, type: "brick" }, // Bottom block
-        { x: 1651, y: 296, type: "brick" }, // Second from bottom
-        { x: 1651, y: 266, type: "brick" }, // Middle block
-        { x: 1651, y: 236, type: "brick" }, // Second from top
-        { x: 1651, y: 206, type: "brick" }, // Top block
-        { x: 1651, y: 176, type: "brick" }, // Top block
+        { x: 1663, y: 326, type: "brick" }, // Bottom block
+        { x: 1663, y: 296, type: "brick" }, // Second from bottom
+        { x: 1663, y: 266, type: "brick" }, // Middle block
+        { x: 1663, y: 236, type: "brick" }, // Second from top
+        { x: 1663, y: 206, type: "brick" }, // Top block
+        { x: 1663, y: 176, type: "brick" }, // Top block
+        { x: 1693, y: 146, type: "brick" }, // Top block
+        { x: 1663, y: 146, type: "brick" }, // Bottom left of square
 
         // Second column
-        { x: 1681, y: 326, type: "brick" }, // Bottom block
-        { x: 1681, y: 296, type: "brick" }, // Second from bottom
-        { x: 1681, y: 266, type: "brick" }, // Middle block
-        { x: 1681, y: 236, type: "brick" }, // Second from top
-        { x: 1681, y: 206, type: "brick" }, // Top block
-        { x: 1681, y: 176, type: "brick" }, // Top block
-        { x: 1711, y: 146, type: "brick" }, // Top block
+        { x: 1693, y: 326, type: "brick" }, // Bottom block
+        { x: 1693, y: 296, type: "brick" }, // Second from bottom
+        { x: 1693, y: 266, type: "brick" }, // Middle block
+        { x: 1693, y: 236, type: "brick" }, // Second from top
+        { x: 1693, y: 206, type: "brick" }, // Top block
+        { x: 1693, y: 176, type: "brick" }, // Top block
 
-        { x: 1711, y: 146, type: "brick" }, // Bottom left of square
-        { x: 1741, y: 146, type: "brick" }, // Bottom right of square
-        { x: 1711, y: 116, type: "brick" }, // Top left of square
-        { x: 1741, y: 116, type: "brick" },
-        { x: 1711, y: 86, type: "brick" },
-        { }
+        { x: 1723, y: 116, type: "brick" }, // Top block
+        { x: 1753, y: 116, type: "brick" }, // Bottom left of square
+        { x: 1723, y: 86, type: "brick" }, // Top block
+        { x: 1753, y: 86, type: "brick" }, // Bottom left of square
+
+        { x: 1723, y: 326, type: "brick" }, // Bottom block
+        { x: 1753, y: 326, type: "brick" }, // Bottom block
+        { x: 1723, y: 356, type: "brick" }, // Second from bottom
+        { x: 1753, y: 356, type: "brick" }, // Second from bottom
+        { x: 1723, y: 386, type: "brick" }, // Middle block
+        { x: 1753, y: 386, type: "brick" }, // Middle block
+
+        { x: 1843, y: 326, type: "brick" }, // First block
+        { x: 1873, y: 326, type: "brick" }, // Second block
+        { x: 1903, y: 326, type: "brick" }, // Third block
+        { x: 1933, y: 326, type: "brick" }, // Fourth block
+        { x: 1963, y: 326, type: "brick" }, // Fifth block - this one goes up
+        { x: 1993, y: 326, type: "brick" }, // Sixth block - this one goes up
+
+        // Vertical column from fifth block (up to ceiling)
+        { x: 1963, y: 296, type: "brick" },
+        { x: 1963, y: 266, type: "brick" },
+        { x: 1963, y: 236, type: "brick" },
+        { x: 1963, y: 206, type: "brick" },
+        { x: 1963, y: 176, type: "brick" },
+        { x: 1963, y: 146, type: "brick" },
+        { x: 1963, y: 116, type: "brick" },
+        { x: 1963, y: 86, type: "brick" },
+
+        // Vertical column from sixth block (up to ceiling)
+        { x: 1993, y: 296, type: "brick" },
+        { x: 1993, y: 266, type: "brick" },
+        { x: 1993, y: 236, type: "brick" },
+        { x: 1993, y: 206, type: "brick" },
+        { x: 1993, y: 176, type: "brick" },
+        { x: 1993, y: 146, type: "brick" },
+        { x: 1993, y: 116, type: "brick" },
+        { x: 1993, y: 86, type: "brick" },
+        // Add these connecting ceiling blocks between the vertical columns
+        { x: 1843, y: 86, type: "brick" },
+        { x: 1873, y: 86, type: "brick" },
+        { x: 1903, y: 86, type: "brick" },
+        { x: 1933, y: 86, type: "brick" },
+        { x: 1963, y: 86, type: "brick" },
+        { x: 1993, y: 86, type: "brick" },
+        { x: 1843, y: 116, type: "brick" },
+        { x: 1873, y: 116, type: "brick" },
+        { x: 1903, y: 116, type: "brick" },
+        { x: 1933, y: 116, type: "brick" },
       ],
       coins: [
         // Left coins relative to the arc (x: 1216)
@@ -533,6 +577,10 @@ class LevelManager {
         // Top coins on the archway
         { x: 1340, y: 236 }, // Top middle left
         { x: 1370, y: 236 }, // Top middle right
+        { x: 1878, y: 296 }, // Lower coin between columns
+        { x: 1903, y: 296 }, // Lower coin between columns
+        { x: 1850, y: 296 }, // Upper coin between columns
+        { x: 1933, y: 296 }, // Upper coin between columns
       ],
       pipes: [],
       enemies: [],
