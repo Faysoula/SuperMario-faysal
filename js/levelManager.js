@@ -98,6 +98,12 @@ class LevelManager {
           this.game.addSprite(coin);
         });
       }
+      if (levelData.movingPlatforms) {
+        levelData.movingPlatforms.forEach((platform) => {
+          const newPlatform = new MovingPlatform(platform.x, platform.y);
+          this.game.addSprite(newPlatform);
+        });
+      }
 
       this.game.addSprite(this.hud);
     }
@@ -674,6 +680,10 @@ class LevelManager {
         { x: 3665, y: 320, size: "large" }, // Third pipe (large) - 180px from second
         { x: 3845, y: 354, size: "medium" }, // Fourth pipe (medium) - 180px from third
         { x: 4025, y: 387, size: "small" },
+      ],
+      movingPlatforms: [
+        { x: 4400, y: 200, index: 0 }, // First platform
+        { x: 4500, y: 420, index: 1 }, // Second platform, starts lower
       ],
       enemies: [],
       levelEnd: {},
