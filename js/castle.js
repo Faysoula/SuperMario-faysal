@@ -3,8 +3,8 @@ class Castle extends Sprite {
     super();
     this.x = x;
     this.y = y;
-    this.width = 320; // Updated from 80 to 160
-    this.height = 320; // Updated from 80 to 160
+    this.width = 320; 
+    this.height = 320; 
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/pipes.png";
     this.castleSprite = { x: 247, y: 863 };

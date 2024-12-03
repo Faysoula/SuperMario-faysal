@@ -12,8 +12,8 @@ class FlagPole extends Sprite {
 
     // Pole parts coordinates
     this.poleSprites = {
-      top: { x: 136, y: 230 }, // Original top ball coordinates
-      segment: { x: 143, y: 247 }, // Updated segment coordinates for clean version
+      top: { x: 136, y: 230 },
+      segment: { x: 143, y: 247 }, 
     };
   }
 

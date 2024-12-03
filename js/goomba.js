@@ -93,7 +93,6 @@ class Goomba extends Sprite {
           this.resolveCollision(sprite);
         }
       } else if (sprite instanceof Player && !this.isDead && !sprite.isDying) {
-        // Add isDying check here
         if (this.checkCollision(sprite)) {
           if (!sprite.damageState.isInvincible) {
             const hitFromAbove =

@@ -156,7 +156,6 @@ class Block extends Sprite {
     }
   }
 
-  // Rest of the class methods remain the same...
   draw(ctx) {
     if (this.type === "stair") {
       if (!this.blockSprite.complete) return;

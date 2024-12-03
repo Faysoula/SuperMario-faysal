@@ -112,11 +112,10 @@ class LevelManager {
   defineLevels() {
     this.levels.push({
       id: "1-1",
-      width: 5945, // Increased by 255 to account for the shift
+      width: 5945,
       height: 480,
       playerSpawn: { x: 5000, y: 380 },
 
-      // Ground segments - Shifted by 255 pixels
       groundSegments: [
         { x: 0, width: 2048, height: 32 }, // First ground section until first gap
         { x: 2118, width: 477, height: 32 }, // Ground after first gap
@@ -124,162 +123,161 @@ class LevelManager {
         { x: 4486, width: 2000, height: 32 },
       ],
 
-      // Block placements - All x values increased by 255
       blocks: [
-        { x: 511, y: 272, type: "question" }, // 256 + 255
-        { x: 575, y: 272, type: "brick" }, // 320 + 255
-        { x: 605, y: 272, type: "question", content: "mushroom" }, // 350 + 255
-        { x: 635, y: 272, type: "brick" }, // 380 + 255
-        { x: 665, y: 272, type: "question" }, // 410 + 255
-        { x: 695, y: 272, type: "brick" }, // 440 + 255
-        { x: 635, y: 144, type: "question" }, // 380 + 255
+        { x: 511, y: 272, type: "question" },
+        { x: 575, y: 272, type: "brick" },
+        { x: 605, y: 272, type: "question", content: "mushroom" },
+        { x: 635, y: 272, type: "brick" },
+        { x: 665, y: 272, type: "question" },
+        { x: 695, y: 272, type: "brick" },
+        { x: 635, y: 144, type: "question" },
         //after first gap
-        { x: 2280, y: 320, type: "brick" }, // 2090 + 190
-        { x: 2310, y: 320, type: "question", content: "mushroom" }, // 2120 + 190
-        { x: 2340, y: 320, type: "brick" }, // 2150 + 190
-        { x: 2370, y: 320, type: "brick" }, // 2180 + 190
-        { x: 2400, y: 220, type: "brick" }, // 2210 + 190
-        { x: 2430, y: 220, type: "brick" }, // 2240 + 190
-        { x: 2460, y: 220, type: "brick" }, // 2270 + 190
-        { x: 2490, y: 220, type: "brick" }, // 2300 + 190
-        { x: 2520, y: 220, type: "brick" }, // 2330 + 190
-        { x: 2550, y: 220, type: "brick" }, // 2360 + 190
-        { x: 2580, y: 220, type: "brick" }, // 2390 + 190
+        { x: 2280, y: 320, type: "brick" },
+        { x: 2310, y: 320, type: "question", content: "mushroom" },
+        { x: 2340, y: 320, type: "brick" },
+        { x: 2370, y: 320, type: "brick" },
+        { x: 2400, y: 220, type: "brick" },
+        { x: 2430, y: 220, type: "brick" },
+        { x: 2460, y: 220, type: "brick" },
+        { x: 2490, y: 220, type: "brick" },
+        { x: 2520, y: 220, type: "brick" },
+        { x: 2550, y: 220, type: "brick" },
+        { x: 2580, y: 220, type: "brick" },
 
         // New section blocks
-        { x: 2740, y: 233, type: "brick" }, // 2550 + 190
-        { x: 2770, y: 233, type: "brick" }, // 2580 + 190
-        { x: 2800, y: 233, type: "brick" }, // 2610 + 190
-        { x: 2830, y: 233, type: "question" }, // 2640 + 190
-        { x: 2830, y: 320, type: "brick" }, // 2640 + 190
-        { x: 2990, y: 320, type: "brick" }, // 2800 + 190
-        { x: 3020, y: 320, type: "brick" }, // 2830 + 190
-        { x: 3147, y: 320, type: "question" }, // 2957 + 190
-        { x: 3213, y: 320, type: "question" }, // 3023 + 190
-        { x: 3279, y: 320, type: "question" }, // 3089 + 190
+        { x: 2740, y: 233, type: "brick" }, 
+        { x: 2770, y: 233, type: "brick" }, 
+        { x: 2800, y: 233, type: "brick" }, 
+        { x: 2830, y: 233, type: "question" },
+        { x: 2830, y: 320, type: "brick" }, 
+        { x: 2990, y: 320, type: "brick" }, 
+        { x: 3020, y: 320, type: "brick" }, 
+        { x: 3147, y: 320, type: "question" }, 
+        { x: 3213, y: 320, type: "question" }, 
+        { x: 3279, y: 320, type: "question" }, 
         { x: 3213, y: 224, type: "question", content: "mushroom" }, // 3023 + 190
-        { x: 3438, y: 320, type: "brick" }, // 3248 + 190
-        { x: 3500, y: 224, type: "brick" }, // 3310 + 190
-        { x: 3530, y: 224, type: "brick" }, // 3340 + 190
-        { x: 3560, y: 224, type: "brick" }, // 3370 + 190
-        { x: 3686, y: 224, type: "brick" }, // 3496 + 190
-        { x: 3716, y: 224, type: "question" }, // 3526 + 190
-        { x: 3746, y: 224, type: "question" }, // 3556 + 190
-        { x: 3776, y: 224, type: "brick" }, // 3586 + 190
-        { x: 3707, y: 324, type: "brick" }, // 3517 + 190
-        { x: 3737, y: 324, type: "brick" }, // 3547 + 190
+        { x: 3438, y: 320, type: "brick" },
+        { x: 3500, y: 224, type: "brick" },
+        { x: 3530, y: 224, type: "brick" },
+        { x: 3560, y: 224, type: "brick" },
+        { x: 3686, y: 224, type: "brick" },
+        { x: 3716, y: 224, type: "question" },
+        { x: 3746, y: 224, type: "question" },
+        { x: 3776, y: 224, type: "brick" },
+        { x: 3707, y: 324, type: "brick" },
+        { x: 3737, y: 324, type: "brick" },
 
         // First staircase
-        { x: 3874, y: 416, type: "stair" }, // 3858 + 16
-        { x: 3906, y: 416, type: "stair" }, // 3890 + 16
-        { x: 3938, y: 416, type: "stair" }, // 3922 + 16
-        { x: 3971, y: 416, type: "stair" }, // 3955 + 16
-        { x: 3908, y: 384, type: "stair" }, // 3892 + 16
-        { x: 3940, y: 384, type: "stair" }, // 3924 + 16
-        { x: 3972, y: 384, type: "stair" }, // 3956 + 16
-        { x: 3940, y: 352, type: "stair" }, // 3924 + 16
-        { x: 3972, y: 352, type: "stair" }, // 3956 + 16
-        { x: 3972, y: 320, type: "stair" }, // 3956 + 16
+        { x: 3874, y: 416, type: "stair" },
+        { x: 3906, y: 416, type: "stair" },
+        { x: 3938, y: 416, type: "stair" },
+        { x: 3971, y: 416, type: "stair" },
+        { x: 3908, y: 384, type: "stair" },
+        { x: 3940, y: 384, type: "stair" },
+        { x: 3972, y: 384, type: "stair" },
+        { x: 3940, y: 352, type: "stair" },
+        { x: 3972, y: 352, type: "stair" },
+        { x: 3972, y: 320, type: "stair" },
 
         // Next staircase
-        { x: 4036, y: 416, type: "stair" }, // 4020 + 16
-        { x: 4068, y: 416, type: "stair" }, // 4052 + 16
-        { x: 4100, y: 416, type: "stair" }, // 4084 + 16
-        { x: 4132, y: 416, type: "stair" }, // 4116 + 16
-        { x: 4036, y: 384, type: "stair" }, // 4020 + 16
-        { x: 4068, y: 384, type: "stair" }, // 4052 + 16
-        { x: 4100, y: 384, type: "stair" }, // 4084 + 16
-        { x: 4036, y: 352, type: "stair" }, // 4020 + 16
-        { x: 4068, y: 352, type: "stair" }, // 4052 + 16
-        { x: 4036, y: 320, type: "stair" }, // 4020 + 16
+        { x: 4036, y: 416, type: "stair" },
+        { x: 4068, y: 416, type: "stair" },
+        { x: 4100, y: 416, type: "stair" },
+        { x: 4132, y: 416, type: "stair" },
+        { x: 4036, y: 384, type: "stair" },
+        { x: 4068, y: 384, type: "stair" },
+        { x: 4100, y: 384, type: "stair" },
+        { x: 4036, y: 352, type: "stair" },
+        { x: 4068, y: 352, type: "stair" },
+        { x: 4036, y: 320, type: "stair" },
 
         // Bigger staircase
-        { x: 4260, y: 416, type: "stair" }, // 4244 + 16
-        { x: 4292, y: 416, type: "stair" }, // 4276 + 16
-        { x: 4324, y: 416, type: "stair" }, // 4308 + 16
-        { x: 4356, y: 416, type: "stair" }, // 4340 + 16
-        { x: 4388, y: 416, type: "stair" }, // 4372 + 16
-        { x: 4292, y: 384, type: "stair" }, // 4276 + 16
-        { x: 4324, y: 384, type: "stair" }, // 4308 + 16
-        { x: 4356, y: 384, type: "stair" }, // 4340 + 16
-        { x: 4388, y: 384, type: "stair" }, // 4372 + 16
-        { x: 4324, y: 352, type: "stair" }, // 4308 + 16
-        { x: 4356, y: 352, type: "stair" }, // 4340 + 16
-        { x: 4388, y: 352, type: "stair" }, // 4372 + 16
-        { x: 4356, y: 320, type: "stair" }, // 4340 + 16
-        { x: 4388, y: 320, type: "stair" }, // 4372 + 16
+        { x: 4260, y: 416, type: "stair" },
+        { x: 4292, y: 416, type: "stair" },
+        { x: 4324, y: 416, type: "stair" },
+        { x: 4356, y: 416, type: "stair" },
+        { x: 4388, y: 416, type: "stair" },
+        { x: 4292, y: 384, type: "stair" },
+        { x: 4324, y: 384, type: "stair" },
+        { x: 4356, y: 384, type: "stair" },
+        { x: 4388, y: 384, type: "stair" },
+        { x: 4324, y: 352, type: "stair" },
+        { x: 4356, y: 352, type: "stair" },
+        { x: 4388, y: 352, type: "stair" },
+        { x: 4356, y: 320, type: "stair" },
+        { x: 4388, y: 320, type: "stair" },
 
         // Final staircases
-        { x: 4484, y: 416, type: "stair" }, // 4468 + 16
-        { x: 4516, y: 416, type: "stair" }, // 4500 + 16
-        { x: 4548, y: 416, type: "stair" }, // 4532 + 16
-        { x: 4580, y: 416, type: "stair" }, // 4564 + 16
-        { x: 4484, y: 384, type: "stair" }, // 4468 + 16
-        { x: 4516, y: 384, type: "stair" }, // 4500 + 16
-        { x: 4548, y: 384, type: "stair" }, // 4532 + 16
-        { x: 4484, y: 352, type: "stair" }, // 4468 + 16
-        { x: 4516, y: 352, type: "stair" }, // 4500 + 16
+        { x: 4484, y: 416, type: "stair" },
+        { x: 4516, y: 416, type: "stair" },
+        { x: 4548, y: 416, type: "stair" },
+        { x: 4580, y: 416, type: "stair" },
+        { x: 4484, y: 384, type: "stair" },
+        { x: 4516, y: 384, type: "stair" },
+        { x: 4548, y: 384, type: "stair" },
+        { x: 4484, y: 352, type: "stair" },
+        { x: 4516, y: 352, type: "stair" },
         { x: 4484, y: 320, type: "stair" },
 
-        { x: 4796, y: 272, type: "brick" }, // 4606 + 190
-        { x: 4826, y: 272, type: "brick" }, // 4636 + 190
-        { x: 4856, y: 272, type: "question" }, // 4666 + 190
-        { x: 4886, y: 272, type: "brick" }, // 4696 + 190
+        { x: 4796, y: 272, type: "brick" },
+        { x: 4826, y: 272, type: "brick" },
+        { x: 4856, y: 272, type: "question" },
+        { x: 4886, y: 272, type: "brick" },
 
         // Final staircase
-        { x: 5205, y: 416, type: "stair" }, // 5015 + 190
-        { x: 5237, y: 416, type: "stair" }, // 5047 + 190
-        { x: 5269, y: 416, type: "stair" }, // 5079 + 190
-        { x: 5301, y: 416, type: "stair" }, // 5111 + 190
-        { x: 5333, y: 416, type: "stair" }, // 5143 + 190
-        { x: 5365, y: 416, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 416, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 416, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 416, type: "stair" }, // 5271 + 190
+        { x: 5205, y: 416, type: "stair" },
+        { x: 5237, y: 416, type: "stair" },
+        { x: 5269, y: 416, type: "stair" },
+        { x: 5301, y: 416, type: "stair" },
+        { x: 5333, y: 416, type: "stair" },
+        { x: 5365, y: 416, type: "stair" },
+        { x: 5397, y: 416, type: "stair" },
+        { x: 5429, y: 416, type: "stair" },
+        { x: 5461, y: 416, type: "stair" },
 
-        { x: 5237, y: 384, type: "stair" }, // 5047 + 190
-        { x: 5269, y: 384, type: "stair" }, // 5079 + 190
-        { x: 5301, y: 384, type: "stair" }, // 5111 + 190
-        { x: 5333, y: 384, type: "stair" }, // 5143 + 190
-        { x: 5365, y: 384, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 384, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 384, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 384, type: "stair" }, // 5271 + 190
+        { x: 5237, y: 384, type: "stair" },
+        { x: 5269, y: 384, type: "stair" },
+        { x: 5301, y: 384, type: "stair" },
+        { x: 5333, y: 384, type: "stair" },
+        { x: 5365, y: 384, type: "stair" },
+        { x: 5397, y: 384, type: "stair" },
+        { x: 5429, y: 384, type: "stair" },
+        { x: 5461, y: 384, type: "stair" },
 
-        { x: 5269, y: 352, type: "stair" }, // 5079 + 190
-        { x: 5301, y: 352, type: "stair" }, // 5111 + 190
-        { x: 5333, y: 352, type: "stair" }, // 5143 + 190
-        { x: 5365, y: 352, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 352, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 352, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 352, type: "stair" }, // 5271 + 190
+        { x: 5269, y: 352, type: "stair" },
+        { x: 5301, y: 352, type: "stair" },
+        { x: 5333, y: 352, type: "stair" },
+        { x: 5365, y: 352, type: "stair" },
+        { x: 5397, y: 352, type: "stair" },
+        { x: 5429, y: 352, type: "stair" },
+        { x: 5461, y: 352, type: "stair" },
 
-        { x: 5301, y: 320, type: "stair" }, // 5111 + 190
-        { x: 5333, y: 320, type: "stair" }, // 5143 + 190
-        { x: 5365, y: 320, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 320, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 320, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 320, type: "stair" }, // 5271 + 190
+        { x: 5301, y: 320, type: "stair" },
+        { x: 5333, y: 320, type: "stair" },
+        { x: 5365, y: 320, type: "stair" },
+        { x: 5397, y: 320, type: "stair" },
+        { x: 5429, y: 320, type: "stair" },
+        { x: 5461, y: 320, type: "stair" },
 
-        { x: 5333, y: 288, type: "stair" }, // 5143 + 190
-        { x: 5365, y: 288, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 288, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 288, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 288, type: "stair" }, // 5271 + 190
+        { x: 5333, y: 288, type: "stair" },
+        { x: 5365, y: 288, type: "stair" },
+        { x: 5397, y: 288, type: "stair" },
+        { x: 5429, y: 288, type: "stair" },
+        { x: 5461, y: 288, type: "stair" },
 
-        { x: 5365, y: 256, type: "stair" }, // 5175 + 190
-        { x: 5397, y: 256, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 256, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 256, type: "stair" }, // 5271 + 190
+        { x: 5365, y: 256, type: "stair" },
+        { x: 5397, y: 256, type: "stair" },
+        { x: 5429, y: 256, type: "stair" },
+        { x: 5461, y: 256, type: "stair" },
 
-        { x: 5397, y: 224, type: "stair" }, // 5207 + 190
-        { x: 5429, y: 224, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 224, type: "stair" }, // 5271 + 190
+        { x: 5397, y: 224, type: "stair" },
+        { x: 5429, y: 224, type: "stair" },
+        { x: 5461, y: 224, type: "stair" },
 
-        { x: 5429, y: 192, type: "stair" }, // 5239 + 190
-        { x: 5461, y: 192, type: "stair" }, // 5271 + 190
+        { x: 5429, y: 192, type: "stair" },
+        { x: 5461, y: 192, type: "stair" },
 
-        { x: 5588, y: 416, type: "stair" }, // 5398 + 190
+        { x: 5588, y: 416, type: "stair" },
       ],
 
       levelEnd: {
@@ -299,10 +297,10 @@ class LevelManager {
 
       // Enemy placements - shifted by 255
       enemies: [
-        //{ type: "goomba", x: 635, y: 368 }, // 380 + 255
-        { type: "goomba", x: 1220, y: 320 }, // 965 + 255
-        { type: "goomba", x: 1517, y: 320 }, // 1262 + 255
-        { type: "goomba", x: 1445, y: 320 }, // 1190 + 255
+        { type: "goomba", x: 635, y: 368 },
+        { type: "goomba", x: 1220, y: 320 },
+        { type: "goomba", x: 1517, y: 320 }, 
+        { type: "goomba", x: 1445, y: 320 }, 
       ],
     });
 
@@ -666,19 +664,19 @@ class LevelManager {
         { x: 1460, y: 296 }, // Right lower
 
         // Top coins on the archway
-        { x: 1340, y: 236 }, // Top middle left
-        { x: 1370, y: 236 }, // Top middle right
-        { x: 1878, y: 296 }, // Lower coin between columns
-        { x: 1903, y: 296 }, // Lower coin between columns
-        { x: 1850, y: 296 }, // Upper coin between columns
-        { x: 1933, y: 296 }, // Upper coin between columns
+        { x: 1340, y: 236 },
+        { x: 1370, y: 236 }, 
+        { x: 1878, y: 296 },
+        { x: 1903, y: 296 },
+        { x: 1850, y: 296 },
+        { x: 1933, y: 296 },
         { x: 2580, y: 320 },
       ],
       pipes: [
-        { x: 3305, y: 387, size: "small" }, // First pipe (small)
-        { x: 3485, y: 354, size: "medium" }, // Second pipe (medium) - 180px from first
-        { x: 3665, y: 320, size: "large" }, // Third pipe (large) - 180px from second
-        { x: 3845, y: 354, size: "medium" }, // Fourth pipe (medium) - 180px from third
+        { x: 3305, y: 387, size: "small" }, 
+        { x: 3485, y: 354, size: "medium" }, 
+        { x: 3665, y: 320, size: "large" },
+        { x: 3845, y: 354, size: "medium" }, 
         { x: 4025, y: 387, size: "small" },
       ],
       movingPlatforms: [

@@ -7,9 +7,9 @@ class Pipe extends Sprite {
     // Define the source coordinates for pipe parts
     this.pipeSprites = {
       leftStem: { x: 119, y: 213 },
-      rightStem: { x: 135, y: 213 }, // Moved left by 1 pixel
+      rightStem: { x: 135, y: 213 },
       topLeft: { x: 119, y: 196 },
-      topRight: { x: 136, y: 196 }, // Moved left by 1 pixel
+      topRight: { x: 136, y: 196 },
     };
 
     // Set dimensions based on pipe size
@@ -69,7 +69,7 @@ class Pipe extends Sprite {
       this.pipeSprites.topRight.y,
       sourceSize,
       sourceSize,
-      Math.floor(this.x + this.headWidth / 2) -3, // Shifted left by 1 pixel
+      Math.floor(this.x + this.headWidth / 2) -3, 
       Math.floor(this.y),
       this.headWidth / 2,
       this.headHeight
@@ -103,7 +103,7 @@ class Pipe extends Sprite {
         this.pipeSprites.rightStem.y,
         sourceSize,
         sourceSize,
-        Math.floor(this.x + stemOffset + stemPartWidth) - 3, // Shifted left by 1 pixel
+        Math.floor(this.x + stemOffset + stemPartWidth) - 3, 
         Math.floor(yPos),
         stemPartWidth,
         segHeight
