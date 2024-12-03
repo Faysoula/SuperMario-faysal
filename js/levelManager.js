@@ -302,13 +302,15 @@ class LevelManager {
 
     this.levels.push({
       id: "1-2",
-      width: 3392,
+      width: 5392,
       height: 480,
-      playerSpawn: { x: 1500, y: 300 }, // Start Mario above screen
+      playerSpawn: { x: 4100, y: 300 }, // Start Mario above screen
 
       // Define required arrays even if empty
       groundSegments: [
-        { x: 0, width: 3392, height: 32 }, // Full ground
+        { x: 0, width: 2503, height: 32 }, // Full ground
+        { x: 2954, width: 1250, height: 32 },
+        { x: 4304, width: 60, height: 32 },
       ],
       blocks: [
         // Left wall blocks
@@ -424,6 +426,57 @@ class LevelManager {
         { x: 2450, y: 58, type: "brick" },
         { x: 2480, y: 58, type: "brick" },
         { x: 2500, y: 58, type: "brick" },
+        // Ceiling blocks continued from 2500 to 4000
+        { x: 2530, y: 58, type: "brick" },
+        { x: 2560, y: 58, type: "brick" },
+        { x: 2590, y: 58, type: "brick" },
+        { x: 2620, y: 58, type: "brick" },
+        { x: 2650, y: 58, type: "brick" },
+        { x: 2680, y: 58, type: "brick" },
+        { x: 2710, y: 58, type: "brick" },
+        { x: 2740, y: 58, type: "brick" },
+        { x: 2770, y: 58, type: "brick" },
+        { x: 2800, y: 58, type: "brick" },
+        { x: 2830, y: 58, type: "brick" },
+        { x: 2860, y: 58, type: "brick" },
+        { x: 2890, y: 58, type: "brick" },
+        { x: 2920, y: 58, type: "brick" },
+        { x: 2950, y: 58, type: "brick" },
+        { x: 2980, y: 58, type: "brick" },
+        { x: 3010, y: 58, type: "brick" },
+        { x: 3040, y: 58, type: "brick" },
+        { x: 3070, y: 58, type: "brick" },
+        { x: 3100, y: 58, type: "brick" },
+        { x: 3130, y: 58, type: "brick" },
+        { x: 3160, y: 58, type: "brick" },
+        { x: 3190, y: 58, type: "brick" },
+        { x: 3220, y: 58, type: "brick" },
+        { x: 3250, y: 58, type: "brick" },
+        { x: 3280, y: 58, type: "brick" },
+        { x: 3310, y: 58, type: "brick" },
+        { x: 3340, y: 58, type: "brick" },
+        { x: 3370, y: 58, type: "brick" },
+        { x: 3400, y: 58, type: "brick" },
+        { x: 3430, y: 58, type: "brick" },
+        { x: 3460, y: 58, type: "brick" },
+        { x: 3490, y: 58, type: "brick" },
+        { x: 3520, y: 58, type: "brick" },
+        { x: 3550, y: 58, type: "brick" },
+        { x: 3580, y: 58, type: "brick" },
+        { x: 3610, y: 58, type: "brick" },
+        { x: 3640, y: 58, type: "brick" },
+        { x: 3670, y: 58, type: "brick" },
+        { x: 3700, y: 58, type: "brick" },
+        { x: 3730, y: 58, type: "brick" },
+        { x: 3760, y: 58, type: "brick" },
+        { x: 3790, y: 58, type: "brick" },
+        { x: 3820, y: 58, type: "brick" },
+        { x: 3850, y: 58, type: "brick" },
+        { x: 3880, y: 58, type: "brick" },
+        { x: 3910, y: 58, type: "brick" },
+        { x: 3940, y: 58, type: "brick" },
+        { x: 3970, y: 58, type: "brick" },
+        { x: 4000, y: 58, type: "brick" },
 
         // Question blocks row (250px right of Mario, 105px above ground)
         { x: 320, y: 343, type: "question", content: "mushroom" }, // First with mushroom
@@ -564,6 +617,38 @@ class LevelManager {
         { x: 1873, y: 116, type: "brick" },
         { x: 1903, y: 116, type: "brick" },
         { x: 1933, y: 116, type: "brick" },
+
+        { x: 2110, y: 326, type: "question" }, // First question block
+        { x: 2185, y: 326, type: "question", content: "mushroom" }, // Second question block
+        { x: 2269, y: 326, type: "question" }, // Third question block
+        { x: 2443, y: 200, type: "question" }, // Second question block
+        { x: 2185, y: 200, type: "question" }, // Third question block
+        { x: 2473, y: 200, type: "question", content: "mushroom" }, // Fourth question block
+
+        // Normal blocks after 50px gap (x: 2213 + 50 = 2263)
+        { x: 2413, y: 326, type: "brick" },
+        { x: 2443, y: 326, type: "brick" },
+        { x: 2473, y: 326, type: "brick" },
+        { x: 2503, y: 326, type: "brick" },
+        { x: 2575, y: 350, type: "brick" },
+        { x: 2661, y: 190, type: "brick" },
+        { x: 2691, y: 190, type: "brick" },
+        { x: 2721, y: 190, type: "brick" },
+        { x: 2751, y: 190, type: "brick" },
+        { x: 2781, y: 190, type: "brick" },
+        { x: 2661, y: 296, type: "brick" },
+        { x: 2691, y: 296, type: "brick" },
+        { x: 2721, y: 296, type: "brick" },
+        { x: 2751, y: 296, type: "brick" },
+        { x: 2781, y: 296, type: "brick" },
+        { x: 2811, y: 296, type: "brick" },
+
+        { x: 4305, y: 419, type: "brick" },
+        { x: 4335, y: 419, type: "brick" },
+        { x: 4305, y: 389, type: "brick" },
+        { x: 4335, y: 389, type: "brick" },
+        { x: 4305, y: 359, type: "brick" },
+        { x: 4335, y: 359, type: "brick" },
       ],
       coins: [
         // Left coins relative to the arc (x: 1216)
@@ -581,8 +666,15 @@ class LevelManager {
         { x: 1903, y: 296 }, // Lower coin between columns
         { x: 1850, y: 296 }, // Upper coin between columns
         { x: 1933, y: 296 }, // Upper coin between columns
+        { x: 2580, y: 320 },
       ],
-      pipes: [],
+      pipes: [
+        { x: 3305, y: 387, size: "small" }, // First pipe (small)
+        { x: 3485, y: 354, size: "medium" }, // Second pipe (medium) - 180px from first
+        { x: 3665, y: 320, size: "large" }, // Third pipe (large) - 180px from second
+        { x: 3845, y: 354, size: "medium" }, // Fourth pipe (medium) - 180px from third
+        { x: 4025, y: 387, size: "small" },
+      ],
       enemies: [],
       levelEnd: {},
     });
