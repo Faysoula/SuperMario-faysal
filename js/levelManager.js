@@ -806,6 +806,11 @@ class LevelManager {
     grid.style.gap = "5px";
     grid.style.marginBottom = "5px";
 
+    // Create buttons container
+    const buttonsContainer = document.createElement("div");
+    buttonsContainer.style.display = "flex";
+    buttonsContainer.style.gap = "5px";
+
     // Create story button
     const storyButton = document.createElement("button");
     storyButton.textContent = "Story";
@@ -815,27 +820,57 @@ class LevelManager {
     storyButton.style.border = "2px solid #DAA520";
     storyButton.style.cursor = "pointer";
 
-    // Create story box container
+    // Create controls button
+    const controlsButton = document.createElement("button");
+    controlsButton.textContent = "Controls";
+    controlsButton.style.fontFamily = "PressStart2P";
+    controlsButton.style.padding = "5px";
+    controlsButton.style.backgroundColor = "#FFD700";
+    controlsButton.style.border = "2px solid #DAA520";
+    controlsButton.style.cursor = "pointer";
+
+    // Create story box
     const storyBox = document.createElement("div");
     storyBox.style.position = "fixed";
     storyBox.style.top = "50%";
     storyBox.style.left = "50%";
     storyBox.style.transform = "translate(-50%, -50%)";
-    storyBox.style.width = "400px"; // Increased width
-    storyBox.style.height = "150px"; // Increased height
+    storyBox.style.width = "400px";
+    storyBox.style.height = "150px";
     storyBox.style.display = "none";
     storyBox.style.zIndex = "1000";
 
-    // Create background element
-    const background = document.createElement("div");
-    background.style.width = "100%";
-    background.style.height = "100%";
-    background.style.backgroundImage = "url('../images/title-screen-3.png')";
-    background.style.backgroundPosition = "-332px -168px";
-    background.style.backgroundRepeat = "no-repeat";
-    background.style.backgroundSize = "100% 100%"; // Stretch to fit
+    // Create controls box
+    const controlsBox = document.createElement("div");
+    controlsBox.style.position = "fixed";
+    controlsBox.style.top = "50%";
+    controlsBox.style.left = "50%";
+    controlsBox.style.transform = "translate(-50%, -50%)";
+    controlsBox.style.width = "400px";
+    controlsBox.style.height = "150px";
+    controlsBox.style.display = "none";
+    controlsBox.style.zIndex = "1000";
 
-    // Create text overlay
+    // Create background elements
+    const storyBackground = document.createElement("div");
+    storyBackground.style.width = "100%";
+    storyBackground.style.height = "100%";
+    storyBackground.style.backgroundImage =
+      "url('../images/title-screen-3.png')";
+    storyBackground.style.backgroundPosition = "-332px -168px";
+    storyBackground.style.backgroundRepeat = "no-repeat";
+    storyBackground.style.backgroundSize = "100% 100%";
+
+    const controlsBackground = document.createElement("div");
+    controlsBackground.style.width = "100%";
+    controlsBackground.style.height = "100%";
+    controlsBackground.style.backgroundImage =
+      "url('../images/title-screen-3.png')";
+    controlsBackground.style.backgroundPosition = "-332px -168px";
+    controlsBackground.style.backgroundRepeat = "no-repeat";
+    controlsBackground.style.backgroundSize = "100% 100%";
+
+    // Create text overlays
     const storyText = document.createElement("div");
     storyText.style.position = "absolute";
     storyText.style.top = "50%";
@@ -848,16 +883,40 @@ class LevelManager {
     storyText.style.padding = "20px";
     storyText.style.width = "90%";
     storyText.textContent =
-      "Mario must race through the Mushroom Kingdom to obtain a chicken shawrma sandwich!";
+      "Mario must race through the Mushroom Kingdom to save Princess Peach from the evil Bowser!";
 
-    // Add elements to story box
-    storyBox.appendChild(background);
+    const controlsText = document.createElement("div");
+    controlsText.style.position = "absolute";
+    controlsText.style.top = "50%";
+    controlsText.style.left = "50%";
+    controlsText.style.transform = "translate(-50%, -50%)";
+    controlsText.style.color = "white";
+    controlsText.style.fontFamily = "PressStart2P";
+    controlsText.style.fontSize = "10px"; // Made slightly smaller to fit all text
+    controlsText.style.textAlign = "center";
+    controlsText.style.padding = "20px";
+    controlsText.style.width = "90%";
+    controlsText.style.lineHeight = "1.8"; // Added line spacing for readability
+    controlsText.innerHTML =
+      "← → : Move<br>↑ or SPACE : Jump<br>↓ : Crouch (Super Mario)<br>P : Pause<br>C : Continue<br>R : Restart Level";
+
+    // Add elements to boxes
+    storyBox.appendChild(storyBackground);
     storyBox.appendChild(storyText);
+    controlsBox.appendChild(controlsBackground);
+    controlsBox.appendChild(controlsText);
 
-    // Toggle story box visibility
+    // Toggle visibility
     storyButton.onclick = () => {
       storyBox.style.display =
         storyBox.style.display === "none" ? "block" : "none";
+      controlsBox.style.display = "none";
+    };
+
+    controlsButton.onclick = () => {
+      controlsBox.style.display =
+        controlsBox.style.display === "none" ? "block" : "none";
+      storyBox.style.display = "none";
     };
 
     // Create level buttons
@@ -882,9 +941,12 @@ class LevelManager {
       }
     }
 
+    buttonsContainer.appendChild(storyButton);
+    buttonsContainer.appendChild(controlsButton);
     container.appendChild(grid);
-    container.appendChild(storyButton);
+    container.appendChild(buttonsContainer);
     document.body.appendChild(container);
     document.body.appendChild(storyBox);
+    document.body.appendChild(controlsBox);
   }
 }
