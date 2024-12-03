@@ -12,6 +12,8 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
     this.sprites = [];
     this.keys = {}; // Store active keys
+    this.paused = false; // Initial pause state
+    this.resetart = false;
     this.camera = new Camera(this.canvas);
     this.bindKeyboardEvents();
   }
@@ -24,6 +26,12 @@ class Game {
     this.sprites.push(sprite);
   }
   update() {
+    if (this.restart) {
+      this.restart = false;
+      this.paused = false;
+      this.sprites = [];
+    }
+    if (this.paused) return; // Skip updating if paused
     let updatedSprites = [];
     let player = null; // Declare player variable first
 
@@ -31,7 +39,7 @@ class Game {
       let sprite = this.sprites[i];
 
       if (sprite instanceof Player) {
-        player = sprite; 
+        player = sprite;
       }
 
       if (!sprite.update(this.sprites, this.keys)) {
@@ -69,6 +77,14 @@ class Game {
     // Handle keydown event
     window.addEventListener("keydown", (e) => {
       this.keys[e.key] = true; // Mark the key as active
+
+      // Handle pause and continue keys
+      if (e.key === "p") {
+        this.paused = true; // Pause the game
+      }
+      if (e.key === "c") {
+        this.paused = false; // Resume the game
+      }
     });
 
     // Handle keyup event
