@@ -64,7 +64,6 @@ class Player extends Sprite {
     this.normalHeight = 60;
     this.crouchHeight = 40;
     this.heightDifference = this.normalHeight - this.crouchHeight;
-
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);

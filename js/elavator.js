@@ -6,6 +6,7 @@ class MovingPlatform extends Sprite {
     this.width = 64;
     this.height = 16;
     this.speed = 1;
+    this.state = "moving";
 
     // Screen boundaries
     this.topBoundary = 0;
@@ -19,29 +20,64 @@ class MovingPlatform extends Sprite {
   }
 
   update(sprites) {
-    // Move platform upward
-    this.y -= this.speed;
+    switch (this.state) {
+      case "moving":
+        // Move platform upward
+        this.y -= this.speed;
 
-    // Reset position when reaching top
-    if (this.y < this.topBoundary) {
-      this.y = this.bottomBoundary;
+        // Reset position when reaching top
+        if (this.y < this.topBoundary) {
+          this.y = this.bottomBoundary;
+        }
+
+        // Handle player collision
+        sprites.forEach((sprite) => {
+          if (sprite instanceof Player) {
+            // Check for intersection with expanded hitbox
+            const expandedHitbox = {
+              x: this.x,
+              y: this.y - sprite.velocityY, // Expand hitbox upward based on player's velocity
+              width: this.width,
+              height: this.height + Math.abs(sprite.velocityY),
+            };
+
+            if (this.checkExpandedCollision(sprite, expandedHitbox)) {
+              // Only handle collision if player is above platform
+              if (sprite.y + sprite.height <= this.y + this.height / 2) {
+                // Align player with platform
+                sprite.y = this.y - sprite.height;
+                sprite.velocityY = 0;
+                sprite.isGrounded = true;
+
+                // Move player up with platform
+                sprite.y -= this.speed;
+              }
+            } else if (
+              sprite.isGrounded &&
+              sprite.y + sprite.height <= this.y + 1 &&
+              sprite.x + sprite.width > this.x &&
+              sprite.x < this.x + this.width
+            ) {
+              // Keep player grounded if they're already on the platform
+              sprite.y = this.y - sprite.height;
+              sprite.velocityY = 0;
+              sprite.isGrounded = true;
+            }
+          }
+        });
+        break;
     }
 
-    // Handle player collision
-    sprites.forEach((sprite) => {
-      if (sprite instanceof Player) {
-        if (this.checkCollision(sprite)) {
-          if (sprite.y + sprite.height <= this.y + 10) {
-            sprite.y = this.y - sprite.height;
-            sprite.velocityY = 0;
-            sprite.isGrounded = true;
-            sprite.y -= this.speed;
-          }
-        }
-      }
-    });
-
     return false;
+  }
+
+  checkExpandedCollision(sprite, hitbox) {
+    return (
+      sprite.x < hitbox.x + hitbox.width &&
+      sprite.x + sprite.width > hitbox.x &&
+      sprite.y < hitbox.y + hitbox.height &&
+      sprite.y + sprite.height > hitbox.y
+    );
   }
 
   draw(ctx) {
@@ -57,15 +93,6 @@ class MovingPlatform extends Sprite {
       this.y,
       this.width,
       this.height
-    );
-  }
-
-  checkCollision(sprite) {
-    return (
-      this.x < sprite.x + sprite.width &&
-      this.x + this.width > sprite.x &&
-      this.y < sprite.y + sprite.height &&
-      this.y + this.height > sprite.y
     );
   }
 }
