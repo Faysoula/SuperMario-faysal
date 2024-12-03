@@ -2,7 +2,7 @@ class HUD extends Sprite {
   constructor() {
     super();
     this.score = 0;
-    this.time = 300;
+    this.time = 300 ;
     this.coins = 0;
     this.lives = 3;
     this.lastUpdateTime = Date.now();

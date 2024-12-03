@@ -1,5 +1,5 @@
 class Goomba extends Sprite {
-  constructor(x, y) {
+  constructor(x, y, isUnderground = false) {
     super();
     this.x = x;
     this.y = y;
@@ -21,15 +21,14 @@ class Goomba extends Sprite {
     this.frameIndex = 0;
     this.frameTimer = 0;
     this.frameDelay = 15;
-    this.updateSprites();
+    this.updateSprites(isUnderground);
   }
   setGame(game) {
     this.game = game;
-    this.updateSprites();
+    this.updateSprites(isUnderground);
   }
 
-  updateSprites() {
-    const isUnderground = this.game?.levelManager?.isUnderground;
+  updateSprites(isUnderground) {
 
     if (isUnderground) {
       this.frames = [
@@ -88,7 +87,10 @@ class Goomba extends Sprite {
     }
 
     sprites.forEach((sprite) => {
-      if (sprite instanceof Platform) {
+      if (
+        sprite instanceof Platform ||
+        (sprite instanceof Block)
+      ) {
         if (this.checkCollision(sprite)) {
           this.resolveCollision(sprite);
         }

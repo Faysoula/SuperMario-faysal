@@ -33,10 +33,9 @@ class MovingPlatform extends Sprite {
         // Handle player collision
         sprites.forEach((sprite) => {
           if (sprite instanceof Player) {
-            // Check for intersection with expanded hitbox
             const expandedHitbox = {
               x: this.x,
-              y: this.y - sprite.velocityY, // Expand hitbox upward based on player's velocity
+              y: this.y - sprite.velocityY,
               width: this.width,
               height: this.height + Math.abs(sprite.velocityY),
             };

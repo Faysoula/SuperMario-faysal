@@ -3,10 +3,12 @@ class LevelManager {
     this.game = game;
     this.currentLevel = 0;
     this.levels = [];
-    this.levelState = "PLAYING"; // PLAYING, COMPLETED, FAILED
-    this.hud = new HUD(); // Create HUD once in constructor
+    this.levelState = "PLAYING"; // PLAYING, TRANSITIONING, COMPLETED
+    this.hud = new HUD();
     this.hud.setLevelManager(this);
     this.isUnderground = false;
+    this.transitionTimer = 0;
+    this.transitionDuration = 60;
   }
 
   loadLevel(levelIndex) {
@@ -17,7 +19,7 @@ class LevelManager {
       this.currentLevel = levelIndex;
 
       if (this.isUnderground) {
-        this.game.canvas.style.backgroundColor = "#000000"; // Set canvas background
+        this.game.canvas.style.backgroundColor = "#000000";
       } else {
         this.game.canvas.style.backgroundColor = "#6B8CFF";
       }
@@ -41,71 +43,129 @@ class LevelManager {
       player.spawnY = levelData.playerSpawn.y;
       this.game.addSprite(player);
 
-      // Then load all other game elements in order
-      levelData.groundSegments.forEach((segment) => {
-        const ground = new Platform(
-          segment.x,
-          segment.y || this.game.canvas.height - segment.height,
-          segment.width,
-          segment.height,
-          this.isUnderground
-        );
-        this.game.addSprite(ground);
-      });
-
-      levelData.blocks.forEach((block) => {
-        const newBlock = new Block(
-          block.x,
-          block.y,
-          block.type,
-          block.content,
-          this.isUnderground
-        );
-        this.game.addSprite(newBlock);
-      });
-
-      levelData.pipes.forEach((pipe) => {
-        const newPipe = new Pipe(pipe.x, pipe.y, pipe.size);
-        this.game.addSprite(newPipe);
-      });
-
-      levelData.enemies.forEach((enemy) => {
-        if (enemy.type === "goomba") {
-          const goomba = new Goomba(enemy.x, enemy.y);
-          this.game.addSprite(goomba);
-        }
-      });
-
-      if (levelData.levelEnd?.flagpole) {
-        const flagpole = new FlagPole(
-          levelData.levelEnd.flagpole.x,
-          levelData.levelEnd.flagpole.y
-        );
-        this.game.addSprite(flagpole);
-      }
-
-      if (levelData.levelEnd?.castle) {
-        const castle = new Castle(
-          levelData.levelEnd.castle.x,
-          levelData.levelEnd.castle.y
-        );
-        castle.setLevelManager(this);
-        this.game.addSprite(castle);
-      }
-      if (levelData.coins) {
-        levelData.coins.forEach((coinData) => {
-          const coin = new Coin(coinData.x, coinData.y, false); // false means not pop-out coin
-          this.game.addSprite(coin);
-        });
-      }
-      if (levelData.movingPlatforms) {
-        levelData.movingPlatforms.forEach((platform) => {
-          const newPlatform = new MovingPlatform(platform.x, platform.y);
-          this.game.addSprite(newPlatform);
-        });
-      }
+      // Load level elements
+      this.loadLevelElements(levelData);
 
       this.game.addSprite(this.hud);
+      this.levelState = "PLAYING";
+    }
+  }
+
+  loadLevelElements(levelData) {
+    // Load ground segments
+    levelData.groundSegments?.forEach((segment) => {
+      const ground = new Platform(
+        segment.x,
+        segment.y || this.game.canvas.height - segment.height,
+        segment.width,
+        segment.height,
+        this.isUnderground
+      );
+      this.game.addSprite(ground);
+    });
+
+    // Load other elements
+    this.loadBlocks(levelData.blocks);
+    this.loadPipes(levelData.pipes);
+    this.loadEnemies(levelData.enemies);
+    this.loadLevelEnd(levelData.levelEnd);
+    this.loadCoins(levelData.coins);
+    this.loadMovingPlatforms(levelData.movingPlatforms);
+  }
+
+  loadBlocks(blocks) {
+    blocks?.forEach((block) => {
+      const newBlock = new Block(
+        block.x,
+        block.y,
+        block.type,
+        block.content,
+        this.isUnderground
+      );
+      this.game.addSprite(newBlock);
+    });
+  }
+
+  loadPipes(pipes) {
+    pipes?.forEach((pipe) => {
+      const newPipe = new Pipe(pipe.x, pipe.y, pipe.size);
+      this.game.addSprite(newPipe);
+    });
+  }
+
+  loadEnemies(enemies) {
+    enemies?.forEach((enemy) => {
+      if (enemy.type === "goomba") {
+        const goomba = new Goomba(enemy.x, enemy.y, this.isUnderground);
+        this.game.addSprite(goomba);
+      }
+    });
+  }
+
+  loadLevelEnd(levelEnd) {
+    if (levelEnd?.flagpole) {
+      const flagpole = new FlagPole(levelEnd.flagpole.x, levelEnd.flagpole.y);
+      this.game.addSprite(flagpole);
+    }
+
+    if (levelEnd?.castle) {
+      const castle = new Castle(levelEnd.castle.x, levelEnd.castle.y);
+      castle.setLevelManager(this);
+      this.game.addSprite(castle);
+    }
+  }
+
+  loadCoins(coins) {
+    coins?.forEach((coinData) => {
+      const coin = new Coin(coinData.x, coinData.y, false);
+      this.game.addSprite(coin);
+    });
+  }
+
+  loadMovingPlatforms(platforms) {
+    platforms?.forEach((platform) => {
+      const newPlatform = new MovingPlatform(platform.x, platform.y);
+      this.game.addSprite(newPlatform);
+    });
+  }
+
+  startLevelTransition() {
+    if (this.levelState === "PLAYING") {
+      this.levelState = "TRANSITIONING";
+      this.transitionTimer = 0;
+    }
+  }
+
+  update() {
+    switch (this.levelState) {
+      case "PLAYING":
+        break;
+
+      case "TRANSITIONING":
+        this.transitionTimer++;
+        if (this.transitionTimer >= this.transitionDuration) {
+          this.nextLevel();
+        }
+        break;
+
+      case "COMPLETED":
+        break;
+    }
+  }
+
+  nextLevel() {
+    if (this.currentLevel < this.levels.length - 1) {
+      // Clear all sprites except HUD
+      this.game.sprites = this.game.sprites.filter(
+        (sprite) => sprite instanceof HUD
+      );
+
+      // Load the next level
+      this.loadLevel(this.currentLevel + 1);
+
+      // Reset states
+      this.levelState = "PLAYING";
+      this.transitionTimer = 0;
     }
   }
 
@@ -145,16 +205,16 @@ class LevelManager {
         { x: 2580, y: 220, type: "brick" },
 
         // New section blocks
-        { x: 2740, y: 233, type: "brick" }, 
-        { x: 2770, y: 233, type: "brick" }, 
-        { x: 2800, y: 233, type: "brick" }, 
+        { x: 2740, y: 233, type: "brick" },
+        { x: 2770, y: 233, type: "brick" },
+        { x: 2800, y: 233, type: "brick" },
         { x: 2830, y: 233, type: "question" },
-        { x: 2830, y: 320, type: "brick" }, 
-        { x: 2990, y: 320, type: "brick" }, 
-        { x: 3020, y: 320, type: "brick" }, 
-        { x: 3147, y: 320, type: "question" }, 
-        { x: 3213, y: 320, type: "question" }, 
-        { x: 3279, y: 320, type: "question" }, 
+        { x: 2830, y: 320, type: "brick" },
+        { x: 2990, y: 320, type: "brick" },
+        { x: 3020, y: 320, type: "brick" },
+        { x: 3147, y: 320, type: "question" },
+        { x: 3213, y: 320, type: "question" },
+        { x: 3279, y: 320, type: "question" },
         { x: 3213, y: 224, type: "question", content: "mushroom" }, // 3023 + 190
         { x: 3438, y: 320, type: "brick" },
         { x: 3500, y: 224, type: "brick" },
@@ -299,8 +359,8 @@ class LevelManager {
       enemies: [
         { type: "goomba", x: 635, y: 368 },
         { type: "goomba", x: 1220, y: 320 },
-        { type: "goomba", x: 1517, y: 320 }, 
-        { type: "goomba", x: 1445, y: 320 }, 
+        { type: "goomba", x: 1517, y: 320 },
+        { type: "goomba", x: 1445, y: 320 },
       ],
     });
 
@@ -308,13 +368,14 @@ class LevelManager {
       id: "1-2",
       width: 5392,
       height: 480,
-      playerSpawn: { x: 4100, y: 300 }, // Start Mario above screen
+      playerSpawn: { x: 72, y: -32 }, // Start Mario above screen
 
       // Define required arrays even if empty
       groundSegments: [
         { x: 0, width: 2503, height: 32 }, // Full ground
         { x: 2954, width: 1250, height: 32 },
         { x: 4304, width: 60, height: 32 },
+        { x: 4600, width: 1000, height: 32 },
       ],
       blocks: [
         // Left wall blocks
@@ -651,8 +712,27 @@ class LevelManager {
         { x: 4335, y: 419, type: "brick" },
         { x: 4305, y: 389, type: "brick" },
         { x: 4335, y: 389, type: "brick" },
-        { x: 4305, y: 359, type: "brick" },
         { x: 4335, y: 359, type: "brick" },
+        // First step (1 block)
+        { x: 4700, y: 416, type: "stair" },
+
+        // Second step (2 blocks)
+        { x: 4732, y: 416, type: "stair" },
+        { x: 4732, y: 384, type: "stair" },
+
+        // Third step (3 blocks)
+        { x: 4764, y: 416, type: "stair" },
+        { x: 4764, y: 384, type: "stair" },
+        { x: 4764, y: 352, type: "stair" },
+
+        // Fourth step (4 blocks)
+        { x: 4796, y: 416, type: "stair" },
+        { x: 4796, y: 384, type: "stair" },
+        { x: 4796, y: 352, type: "stair" },
+        { x: 4796, y: 320, type: "stair" },
+
+        // Block for flagpole base
+        { x: 4900, y: 416, type: "stair" },
       ],
       coins: [
         // Left coins relative to the arc (x: 1216)
@@ -665,7 +745,7 @@ class LevelManager {
 
         // Top coins on the archway
         { x: 1340, y: 236 },
-        { x: 1370, y: 236 }, 
+        { x: 1370, y: 236 },
         { x: 1878, y: 296 },
         { x: 1903, y: 296 },
         { x: 1850, y: 296 },
@@ -673,25 +753,40 @@ class LevelManager {
         { x: 2580, y: 320 },
       ],
       pipes: [
-        { x: 3305, y: 387, size: "small" }, 
-        { x: 3485, y: 354, size: "medium" }, 
+        { x: 3305, y: 387, size: "small" },
+        { x: 3485, y: 354, size: "medium" },
         { x: 3665, y: 320, size: "large" },
-        { x: 3845, y: 354, size: "medium" }, 
+        { x: 3845, y: 354, size: "medium" },
         { x: 4025, y: 387, size: "small" },
       ],
       movingPlatforms: [
         { x: 4400, y: 200, index: 0 }, // First platform
         { x: 4500, y: 420, index: 1 }, // Second platform, starts lower
       ],
-      enemies: [],
-      levelEnd: {},
-    });
-  }
+      enemies: [
+        { type: "goomba", x: 400, y: 384 },
 
-  nextLevel() {
-    if (this.currentLevel < this.levels.length - 1) {
-      this.loadLevel(this.currentLevel + 1);
-    }
+        // Near stairs
+        { type: "goomba", x: 750, y: 384 },
+        { type: "goomba", x: 800, y: 384 },
+
+        // In the brick area
+        { type: "goomba", x: 1300, y: 384 },
+        { type: "goomba", x: 1350, y: 384 },
+
+        // Near the second question block section
+        { type: "goomba", x: 2200, y: 384 },
+        { type: "goomba", x: 2250, y: 384 },
+
+        // Near pipes
+        { type: "goomba", x: 3400, y: 384 },
+        { type: "goomba", x: 3600, y: 384 },
+      ],
+      levelEnd: {
+        flagpole: { x: 4916, y: 128 },
+        castle: { x: 5000, y: 288 },
+      },
+    });
   }
 
   restartLevel() {
@@ -709,7 +804,63 @@ class LevelManager {
     grid.style.display = "grid";
     grid.style.gridTemplateColumns = "repeat(4, 1fr)";
     grid.style.gap = "5px";
+    grid.style.marginBottom = "5px";
 
+    // Create story button
+    const storyButton = document.createElement("button");
+    storyButton.textContent = "Story";
+    storyButton.style.fontFamily = "PressStart2P";
+    storyButton.style.padding = "5px";
+    storyButton.style.backgroundColor = "#FFD700";
+    storyButton.style.border = "2px solid #DAA520";
+    storyButton.style.cursor = "pointer";
+
+    // Create story box container
+    const storyBox = document.createElement("div");
+    storyBox.style.position = "fixed";
+    storyBox.style.top = "50%";
+    storyBox.style.left = "50%";
+    storyBox.style.transform = "translate(-50%, -50%)";
+    storyBox.style.width = "400px"; // Increased width
+    storyBox.style.height = "150px"; // Increased height
+    storyBox.style.display = "none";
+    storyBox.style.zIndex = "1000";
+
+    // Create background element
+    const background = document.createElement("div");
+    background.style.width = "100%";
+    background.style.height = "100%";
+    background.style.backgroundImage = "url('../images/title-screen-3.png')";
+    background.style.backgroundPosition = "-332px -168px";
+    background.style.backgroundRepeat = "no-repeat";
+    background.style.backgroundSize = "100% 100%"; // Stretch to fit
+
+    // Create text overlay
+    const storyText = document.createElement("div");
+    storyText.style.position = "absolute";
+    storyText.style.top = "50%";
+    storyText.style.left = "50%";
+    storyText.style.transform = "translate(-50%, -50%)";
+    storyText.style.color = "white";
+    storyText.style.fontFamily = "PressStart2P";
+    storyText.style.fontSize = "12px";
+    storyText.style.textAlign = "center";
+    storyText.style.padding = "20px";
+    storyText.style.width = "90%";
+    storyText.textContent =
+      "Mario must race through the Mushroom Kingdom to obtain a chicken shawrma sandwich!";
+
+    // Add elements to story box
+    storyBox.appendChild(background);
+    storyBox.appendChild(storyText);
+
+    // Toggle story box visibility
+    storyButton.onclick = () => {
+      storyBox.style.display =
+        storyBox.style.display === "none" ? "block" : "none";
+    };
+
+    // Create level buttons
     for (let world = 1; world <= 1; world++) {
       for (let level = 1; level <= 2; level++) {
         const button = document.createElement("button");
@@ -718,6 +869,7 @@ class LevelManager {
         button.style.backgroundColor = "#FFD700";
         button.style.border = "2px solid #DAA520";
         button.style.cursor = "pointer";
+        button.style.fontFamily = "PressStart2P";
 
         button.addEventListener("click", () => {
           const levelIndex = (world - 1) * 4 + (level - 1);
@@ -731,6 +883,8 @@ class LevelManager {
     }
 
     container.appendChild(grid);
+    container.appendChild(storyButton);
     document.body.appendChild(container);
+    document.body.appendChild(storyBox);
   }
 }
