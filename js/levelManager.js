@@ -98,6 +98,9 @@ class LevelManager {
       if (enemy.type === "goomba") {
         const goomba = new Goomba(enemy.x, enemy.y, this.isUnderground);
         this.game.addSprite(goomba);
+      } else if (enemy.type === "turtle") {
+        const turtle = new Turtle(enemy.x, enemy.y, this.isUnderground);
+        this.game.addSprite(turtle);
       }
     });
   }
@@ -357,6 +360,7 @@ class LevelManager {
 
       // Enemy placements - shifted by 255
       enemies: [
+        { type: "turtle", x: 500, y: 384 },
         { type: "goomba", x: 635, y: 368 },
         { type: "goomba", x: 1220, y: 320 },
         { type: "goomba", x: 1517, y: 320 },
@@ -765,6 +769,8 @@ class LevelManager {
       ],
       enemies: [
         { type: "goomba", x: 400, y: 384 },
+
+        { type: "turtle", x: 600, y: 384 },
 
         // Near stairs
         { type: "goomba", x: 750, y: 384 },

@@ -3,7 +3,7 @@ const levelManager = new LevelManager(game);
 
 levelManager.defineLevels();
 
-levelManager.loadLevel(1);
+levelManager.loadLevel(0);
 
 levelManager.createLevelSelector();
 
