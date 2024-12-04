@@ -174,7 +174,7 @@ class LevelManager {
       id: "1-1",
       width: 5945,
       height: 480,
-      playerSpawn: { x: 5000, y: 380 },
+      playerSpawn: { x: 81, y: 380 },
 
       groundSegments: [
         { x: 0, width: 2048, height: 32 }, // First ground section until first gap

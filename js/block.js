@@ -1,5 +1,5 @@
 class Block extends Sprite {
-  constructor(x, y, type = "brick", content,isUnderground = false) {
+  constructor(x, y, type = "brick", content, isUnderground) {
     super();
     this.x = x;
     this.y = y;
@@ -21,6 +21,7 @@ class Block extends Sprite {
     this.originalY = y;
     this.hitCooldown = 0;
 
+    this.isUnderground = isUnderground;
     this.updateSprites(isUnderground);
 
     this.blockSprite = new Image();
@@ -30,11 +31,10 @@ class Block extends Sprite {
     this.frameIndex = 0;
     this.frameTimer = 0;
     this.frameDelay = 15;
-    
   }
 
   updateSprites(isUnderground) {
-    if(isUnderground){
+    if (isUnderground) {
       this.questionBlockFrames = [
         { x: 394, y: 78 },
         { x: 411, y: 78 },
@@ -44,7 +44,7 @@ class Block extends Sprite {
       this.hitFrame = { x: 445, y: 78 };
       this.brickFrame = { x: 181, y: 16 };
       this.stairFrame = { x: 147, y: 33 };
-    }else{
+    } else {
       this.questionBlockFrames = [
         { x: 298, y: 78 },
         { x: 315, y: 78 },
@@ -135,16 +135,29 @@ class Block extends Sprite {
         const player = sprites.find((sprite) => sprite instanceof Player);
         if (player && player.isSuper) {
           // Create four particles
-          sprites.push(new BrickParticle(this.x, this.y, -1));
-          sprites.push(new BrickParticle(this.x + this.width, this.y, 1));
+          sprites.push(new BrickParticle(this.x, this.y, -1, this.isUnderground));
           sprites.push(
-            new BrickParticle(this.x, this.y + this.height / 2, -0.5)
+            new BrickParticle(
+              this.x + this.width,
+              this.y,
+              1,
+              this.isUnderground
+            )
+          );
+          sprites.push(
+            new BrickParticle(
+              this.x,
+              this.y + this.height / 2,
+              -0.5,
+              this.isUnderground
+            )
           );
           sprites.push(
             new BrickParticle(
               this.x + this.width,
               this.y + this.height / 2,
-              0.5
+              0.5,
+              this.isUnderground
             )
           );
           return true; // Remove the block
