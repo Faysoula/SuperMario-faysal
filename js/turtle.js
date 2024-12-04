@@ -41,6 +41,8 @@ class Turtle extends Sprite {
         shell: { x: 360, y: 35 },
       },
     };
+
+    this.stompSound = new Audio("../sounds/stomp.wav");
   }
 
   update(sprites) {
@@ -109,6 +111,7 @@ class Turtle extends Sprite {
 
     if (hitFromAbove) {
       if (this.state.current === "WALKING") {
+        this.stompSound.play();
         this.enterShellState();
         player.velocityY = -8;
         if (hud) hud.addScore(200);
@@ -153,7 +156,7 @@ class Turtle extends Sprite {
 
   kickShell(kickLeft) {
     if (this.state.shellKickCooldown === 0) {
-      this.state.shellVelocity = kickLeft ? -8 : 8;
+      this.state.shellVelocity = kickLeft ? 8 : -8;
       this.state.shellKickCooldown = 10;
       this.state.lastKickDirection = kickLeft;
     }

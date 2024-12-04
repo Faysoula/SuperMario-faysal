@@ -23,24 +23,20 @@ class Mushroom extends Sprite {
     const hud = sprites.find((sprite) => sprite instanceof HUD);
     if (this.isCollected) return true;
 
-    // Handle emergence animation from block
     if (this.isEmerging) {
       if (this.y > this.spawnY - this.emergenceHeight) {
         this.y -= this.emergenceSpeed;
       } else {
         this.isEmerging = false;
-        // Start moving right when emergence is complete
         this.velocityX = 2;
       }
       return false;
     }
 
-    // Apply gravity and movement
     this.velocityY += this.gravity;
     this.y += this.velocityY;
     this.x += this.velocityX;
 
-    // Reset grounded state
     this.isGrounded = false;
 
     sprites.forEach((sprite) => {
@@ -70,10 +66,6 @@ class Mushroom extends Sprite {
           if (this.checkCollision(sprite)) {
             this.resolveCollision(sprite);
           }
-          break;
-
-        default:
-          // Handle unknown sprite types or do nothing
           break;
       }
     });

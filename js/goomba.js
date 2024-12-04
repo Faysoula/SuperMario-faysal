@@ -22,6 +22,7 @@ class Goomba extends Sprite {
     this.frameTimer = 0;
     this.frameDelay = 15;
     this.updateSprites(isUnderground);
+    this.stompSound = new Audio("../sounds/stomp.wav");
   }
   setGame(game) {
     this.game = game;
@@ -29,7 +30,6 @@ class Goomba extends Sprite {
   }
 
   updateSprites(isUnderground) {
-
     if (isUnderground) {
       this.frames = [
         { x: 0, y: 34 }, // Underground walking frame 1
@@ -87,10 +87,7 @@ class Goomba extends Sprite {
     }
 
     sprites.forEach((sprite) => {
-      if (
-        sprite instanceof Platform ||
-        (sprite instanceof Block)
-      ) {
+      if (sprite instanceof Platform || sprite instanceof Block) {
         if (this.checkCollision(sprite)) {
           this.resolveCollision(sprite);
         }
@@ -131,6 +128,10 @@ class Goomba extends Sprite {
     this.y = this.y + (this.originalHeight + this.squishHeight - 25);
     this.velocityX = 0;
     this.velocityY = 0;
+    try {
+      this.stompSound.currentTime = 0;
+      this.stompSound.play().catch(() => {});
+    } catch (e) {}
   }
 
   checkCollision(sprite) {

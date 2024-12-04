@@ -31,6 +31,10 @@ class Block extends Sprite {
     this.frameIndex = 0;
     this.frameTimer = 0;
     this.frameDelay = 15;
+    this.coinSound = new Audio("../sounds/smb_coin.wav");
+    this.powerupAppearsSound = new Audio("../sounds/smb_powerup_appears.wav");
+    this.bumpSound = new Audio("../sounds/smb_bump.wav");
+    this.breakSound = new Audio("../sounds/smb_breakblock.wav");
   }
 
   updateSprites(isUnderground) {
@@ -54,6 +58,67 @@ class Block extends Sprite {
       this.hitFrame = { x: 51, y: 16 };
       this.brickFrame = { x: 34, y: 16 };
       this.stairFrame = { x: 0, y: 33 };
+    }
+  }
+
+  handleHit(sprites) {
+    if (this.hit || this.hitCooldown > 0) return false;
+    this.hitCooldown = 10;
+
+    switch (this.type) {
+      case "question":
+        this.hit = true;
+        if (this.content === "mushroom") {
+          const mushroom = new Mushroom(this.x, this.y - this.height);
+          sprites.push(mushroom);
+          this.powerupAppearsSound.play(); // Play powerup appears sound
+        } else {
+          const coin = new Coin(this.x + (this.width - 24) / 2, this.y, true);
+          sprites.push(coin);
+          this.coinSound.play(); // Play coin sound
+        }
+        return false;
+
+      case "brick":
+        const player = sprites.find((sprite) => sprite instanceof Player);
+        if (player && player.isSuper) {
+          // Create four particles
+          sprites.push(
+            new BrickParticle(this.x, this.y, -1, this.isUnderground)
+          );
+          sprites.push(
+            new BrickParticle(
+              this.x + this.width,
+              this.y,
+              1,
+              this.isUnderground
+            )
+          );
+          sprites.push(
+            new BrickParticle(
+              this.x,
+              this.y + this.height / 2,
+              -0.5,
+              this.isUnderground
+            )
+          );
+          sprites.push(
+            new BrickParticle(
+              this.x + this.width,
+              this.y + this.height / 2,
+              0.5,
+              this.isUnderground
+            )
+          );
+          this.breakSound.play(); // Play break sound
+          return true; // Remove the block
+        } else {
+          this.bumpSound.play(); // Play bump sound
+        }
+        return false;
+
+      default:
+        return false;
     }
   }
 
@@ -113,60 +178,6 @@ class Block extends Sprite {
     }
 
     return false;
-  }
-
-  handleHit(sprites) {
-    if (this.hit || this.hitCooldown > 0) return false;
-    this.hitCooldown = 10;
-
-    switch (this.type) {
-      case "question":
-        this.hit = true;
-        if (this.content === "mushroom") {
-          const mushroom = new Mushroom(this.x, this.y - this.height);
-          sprites.push(mushroom);
-        } else {
-          const coin = new Coin(this.x + (this.width - 24) / 2, this.y, true);
-          sprites.push(coin);
-        }
-        return false;
-
-      case "brick":
-        const player = sprites.find((sprite) => sprite instanceof Player);
-        if (player && player.isSuper) {
-          // Create four particles
-          sprites.push(new BrickParticle(this.x, this.y, -1, this.isUnderground));
-          sprites.push(
-            new BrickParticle(
-              this.x + this.width,
-              this.y,
-              1,
-              this.isUnderground
-            )
-          );
-          sprites.push(
-            new BrickParticle(
-              this.x,
-              this.y + this.height / 2,
-              -0.5,
-              this.isUnderground
-            )
-          );
-          sprites.push(
-            new BrickParticle(
-              this.x + this.width,
-              this.y + this.height / 2,
-              0.5,
-              this.isUnderground
-            )
-          );
-          return true; // Remove the block
-        }
-        return false;
-
-      default:
-        return false;
-    }
   }
 
   draw(ctx) {

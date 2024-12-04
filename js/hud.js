@@ -28,6 +28,7 @@ class HUD extends Sprite {
     this.timeUpDuration = 120;
     this.deathDelay = 70;
     this.gameOverDuration = 300;
+    
   }
 
   setLevelManager(levelManager) {

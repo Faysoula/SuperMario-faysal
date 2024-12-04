@@ -9,10 +9,20 @@ class LevelManager {
     this.isUnderground = false;
     this.transitionTimer = 0;
     this.transitionDuration = 60;
+
+    this.overworldMusic = new Audio("../sounds/overworld.mp3");
+    this.underworldMusic = new Audio("../sounds/underground.mp3");
+    this.overworldMusic.loop = true;
+    this.underworldMusic.loop = true;
+    this.currentMusic = null;
   }
 
   loadLevel(levelIndex) {
     if (levelIndex >= 0 && levelIndex < this.levels.length) {
+      if (this.currentMusic) {
+        this.currentMusic.pause();
+        this.currentMusic.currentTime = 0;
+      }
       this.isUnderground = levelIndex === 1;
       this.game.sprites = [];
       const levelData = this.levels[levelIndex];
@@ -20,8 +30,10 @@ class LevelManager {
 
       if (this.isUnderground) {
         this.game.canvas.style.backgroundColor = "#000000";
+        this.currentMusic = this.underworldMusic;
       } else {
         this.game.canvas.style.backgroundColor = "#6B8CFF";
+        this.currentMusic = this.overworldMusic;
       }
 
       this.game.setLevelBoundaries(levelData.width, levelData.height);
@@ -48,6 +60,18 @@ class LevelManager {
 
       this.game.addSprite(this.hud);
       this.levelState = "PLAYING";
+    }
+  }
+  playMusic() {
+    if (this.currentMusic && this.currentMusic.paused) {
+      this.currentMusic.play();
+    }
+  }
+
+  stopMusic() {
+    if (this.currentMusic) {
+      this.currentMusic.pause();
+      this.currentMusic.currentTime = 0;
     }
   }
 

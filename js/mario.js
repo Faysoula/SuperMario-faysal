@@ -10,7 +10,7 @@ class Player extends Sprite {
     this.velocityX = 0;
     this.velocityY = 0;
     this.speed = 3;
-    this.airControl = 2;
+    this.airControl = 5;
     this.jumpForce = -15;
     this.gravity = 0.8;
     this.isGrounded = false;
@@ -18,13 +18,15 @@ class Player extends Sprite {
     this.spawnY = y;
     this.direction = 1;
     this.turnTimer = 0;
-    this.maxTurnTime = 5;
+    this.maxTurnTime = 8;
     this.wasGrounded = true;
     this.jumpDirection = 1;
     this.groundSpeed = 0;
     this.isDying = false;
     this.deathJumpVelocity = -12;
     this.deathGravity = 0.5;
+    this.deathTimer = 0;
+    this.deathDelay = 130;
     this.isSlidingPole = false;
     this.slideStartY = 0;
     this.slideEndY = 0;
@@ -67,6 +69,12 @@ class Player extends Sprite {
     this.spriteSheet = new Image();
     this.spriteSheet.src = "../images/smb_mario_sheet.png";
     this.animation = new SpriteAnimation(this.spriteSheet, 19, 16);
+    this.deathSound = new Audio("../sounds/smb_mariodie.wav");
+    this.deathSoundPlayed = false;
+    this.jumpSound = new Audio("../sounds/jump.wav");
+    this.powerupSound = new Audio("../sounds/powerup.wav");
+    this.flagpoleSound = new Audio("../sounds/smb_flagpole.wav");
+    this.gameOverSound = new Audio("../sounds/smb_gameover.wav");
   }
   takeDamage() {
     if (this.isSuper && !this.damageState.isInvincible && !this.isDying) {
@@ -158,6 +166,7 @@ class Player extends Sprite {
     this.velocityY = 0;
     this.direction = -1; // Face left initially
     this.slidePhase = "left";
+    this.flagpoleSound.play();
     if (this.isSuper) {
       this.animation.setState("flagpoleLeft"); // uses the this
     } else {
@@ -256,21 +265,33 @@ class Player extends Sprite {
   }
 
   die() {
-    // Check if dying from time up
     const hud = this.levelManager?.game.sprites.find(
       (sprite) => sprite instanceof HUD
     );
     const isTimeUp = hud && hud.time <= 0;
+    const isGameOver = hud && hud.lives <= 1; // Check if this death will trigger game over
 
     if (this.isSuper && !isTimeUp) {
-      // Only revert to small if not dying from time up
       this.revertToSmall();
       this.velocityY = -8;
       return;
     }
 
     if (!this.isDying) {
+      if (this.levelManager) {
+        this.levelManager.stopMusic();
+      }
+
+      // Only play death sound if it's not a game over
+      if (!isGameOver && !this.deathSoundPlayed) {
+        this.deathSound.play();
+        this.deathSoundPlayed = true;
+      }else{
+        this.gameOverSound.play();
+      }
+
       this.isDying = true;
+      this.deathTimer = 0;
       this.velocityY = this.deathJumpVelocity;
       this.velocityX = 0;
       this.animation.setState("death");
@@ -297,13 +318,24 @@ class Player extends Sprite {
     this.updateDamageState();
 
     if (this.isDying) {
+      this.deathTimer++; // Increment death timer
       this.velocityY += this.deathGravity;
       this.y += this.velocityY;
 
-      if (this.y > 800) {
+      // Wait for both death animation and timer
+      if (this.y > 800 && this.deathTimer >= this.deathDelay) {
+        this.deathTimer = 0; // Reset timer
         this.respawn(camera);
       }
       return false;
+    }
+    this.deathTimer = 0;
+
+    if (
+      (keys["ArrowLeft"] || keys["ArrowRight"] || keys["A"] || keys["D"]) &&
+      this.levelManager
+    ) {
+      this.levelManager.playMusic();
     }
     this.handleTransformation();
     sprites.forEach((sprite) => {
@@ -438,6 +470,7 @@ class Player extends Sprite {
       this.isGrounded = false;
       this.jumpDirection = this.direction;
       this.animation.setState(this.direction === 1 ? "jumpRight" : "jumpLeft");
+      this.jumpSound.play();
     }
 
     if (this.isGrounded) {
@@ -530,7 +563,7 @@ class Player extends Sprite {
   }
 
   respawn() {
-    const hud = this.levelManager.game.sprites.find(
+    const hud = this.levelManager?.game.sprites.find(
       (sprite) => sprite instanceof HUD
     );
 
@@ -541,6 +574,8 @@ class Player extends Sprite {
       this.velocityX = 0;
       this.velocityY = 0;
       this.isDying = false;
+      this.deathTimer = 0; // Reset death timer
+      this.deathSoundPlayed = false;
       this.animation.setState(this.direction === 1 ? "idleRight" : "idleLeft");
 
       if (this.camera) {
@@ -615,6 +650,7 @@ class Player extends Sprite {
 
   transformToSuper() {
     if (!this.isSuper && !this.isTransforming) {
+      this.powerupSound.play();
       this.isTransforming = true;
       this.transformationTimer = 0;
       const heightDifference = this.superHeight - this.smallHeight;
